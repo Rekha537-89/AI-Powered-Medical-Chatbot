@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Healthcare Assistant – Powered by IBM Bob</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-heart-pulse"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">HealthAI</span>
+                    <span class="logo-sub">Powered by IBM Bob · Granite 3</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="chat">
+                    <i class="fas fa-comments"></i><span>Chat</span>
+                </button>
+                <button class="nav-btn" data-section="wellness">
+                    <i class="fas fa-spa"></i><span>Wellness</span>
+                </button>
+                <button class="nav-btn" data-section="symptoms">
+                    <i class="fas fa-stethoscope"></i><span>Symptoms</span>
+                </button>
+                <button class="nav-btn" data-section="codegen">
+                    <i class="fas fa-code"></i><span>Code Gen</span>
+                </button>
+                <button class="nav-btn" data-section="about">
+                    <i class="fas fa-circle-info"></i><span>About</span>
+                </button>
+            </nav>
+            <div class="header-status">
+                <span class="pulse-dot"></span>
+                <span class="status-text">AI Online</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ── CHAT SECTION ── -->
+        <section id="chat-section" class="section active">
+            <div class="chat-layout">
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="sidebar-block">
+                        <h4 class="sidebar-heading"><i class="fas fa-bolt"></i> Quick Topics</h4>
+                        <div class="quick-actions">
+                            <button class="quick-btn" data-query="What are the symptoms of common cold and how do I treat it?">
+                                <i class="fas fa-thermometer-half"></i><span>Cold &amp; Flu</span>
+                            </button>
+                            <button class="quick-btn" data-query="Give me 5 evidence-based tips for better sleep quality.">
+                                <i class="fas fa-moon"></i><span>Sleep Tips</span>
+                            </button>
+                            <button class="quick-btn" data-query="What does a well-balanced healthy diet look like?">
+                                <i class="fas fa-apple-whole"></i><span>Healthy Diet</span>
+                            </button>
+                            <button class="quick-btn" data-query="How can I manage stress and anxiety effectively?">
+                                <i class="fas fa-brain"></i><span>Stress Relief</span>
+                            </button>
+                            <button class="quick-btn" data-query="Suggest a beginner-friendly exercise routine for the week.">
+                                <i class="fas fa-person-running"></i><span>Exercise Plan</span>
+                            </button>
+                            <button class="quick-btn" data-query="What natural ways can I use to boost my immune system?">
+                                <i class="fas fa-shield-virus"></i><span>Immunity Boost</span>
+                            </button>
+                            <button class="quick-btn" data-query="What are common signs of dehydration and how to stay hydrated?">
+                                <i class="fas fa-droplet"></i><span>Hydration</span>
+                            </button>
+                            <button class="quick-btn" data-query="Give me tips for maintaining a healthy heart and good cardiovascular health.">
+                                <i class="fas fa-heart-pulse"></i><span>Heart Health</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-block vitals-block">
+                        <h4 class="sidebar-heading"><i class="fas fa-chart-line"></i> Health Reminders</h4>
+                        <ul class="reminder-list">
+                            <li><i class="fas fa-glass-water"></i> Drink 8 glasses of water daily</li>
+                            <li><i class="fas fa-walking"></i> 10,000 steps a day goal</li>
+                            <li><i class="fas fa-bed"></i> Aim for 7–9 hours of sleep</li>
+                            <li><i class="fas fa-apple-whole"></i> 5 servings of fruits &amp; veggies</li>
+                            <li><i class="fas fa-calendar-check"></i> Schedule annual check-up</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        <p><strong>Disclaimer:</strong> For general information only. Always consult a qualified healthcare professional for medical advice.</p>
+                    </div>
+                </aside>
+
+                <!-- Chat Panel -->
+                <div class="chat-panel">
+                    <div class="chat-topbar">
+                        <div class="agent-info">
+                            <div class="agent-avatar"><i class="fas fa-robot"></i></div>
+                            <div>
+                                <p class="agent-name">HealthAI Assistant</p>
+                                <p class="agent-model">IBM Granite 3 · Agentic Mode</p>
+                            </div>
+                        </div>
+                        <div class="topbar-actions">
+                            <button class="icon-btn" id="exportChat" title="Export conversation">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="icon-btn danger" id="clearChat" title="Clear chat">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Welcome message -->
+                        <div class="message bot-message">
+                            <div class="msg-avatar"><i class="fas fa-robot"></i></div>
+                            <div class="msg-body">
+                                <div class="msg-bubble">
+                                    <p>Hello! I'm your <strong>AI Healthcare Assistant</strong>, powered by <strong>IBM Bob (Granite 3)</strong>. 👋</p>
+                                    <p>I can help you with:</p>
+                                    <ul>
+                                        <li>General health information &amp; guidance</li>
+                                        <li>Personalised wellness &amp; nutrition advice</li>
+                                        <li>Preventive healthcare tips</li>
+                                        <li>Symptom awareness &amp; healthy lifestyle practices</li>
+                                    </ul>
+                                    <p>How can I support your health journey today?</p>
+                                </div>
+                                <span class="msg-meta">HealthAI · Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Typing indicator -->
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="msg-avatar small"><i class="fas fa-robot"></i></div>
+                        <div class="typing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="typing-label">HealthAI is thinking…</span>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <form class="chat-form" id="chatForm">
+                            <textarea
+                                id="userInput"
+                                placeholder="Ask me anything about health &amp; wellness…"
+                                rows="1"
+                                autocomplete="off"
+                                required
+                            ></textarea>
+                            <button type="submit" id="sendBtn" title="Send message">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                        <p class="input-hint">Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── WELLNESS SECTION ── -->
+        <section id="wellness-section" class="section">
+            <div class="page-container">
+                <div class="page-header">
+                    <h2><i class="fas fa-spa"></i> Wellness Dashboard</h2>
+                    <p>Explore personalised health and wellness topics. Click any card to get AI guidance.</p>
+                </div>
+                <div class="wellness-grid">
+                    <div class="wellness-card" data-topic="heart-health">
+                        <div class="wcard-icon" style="--c:#da1e28"><i class="fas fa-heart-pulse"></i></div>
+                        <h3>Heart Health</h3>
+                        <p>Cardiovascular wellness tips, blood pressure management, and heart-healthy habits.</p>
+                        <button class="wellness-action" data-topic="heart-health">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="nutrition">
+                        <div class="wcard-icon" style="--c:#24a148"><i class="fas fa-utensils"></i></div>
+                        <h3>Nutrition</h3>
+                        <p>Personalised nutrition advice, balanced diet plans, and healthy eating strategies.</p>
+                        <button class="wellness-action" data-topic="nutrition">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="fitness">
+                        <div class="wcard-icon" style="--c:#0f62fe"><i class="fas fa-dumbbell"></i></div>
+                        <h3>Fitness</h3>
+                        <p>Exercise routines tailored to your fitness level, from beginner to advanced.</p>
+                        <button class="wellness-action" data-topic="fitness">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="mental-health">
+                        <div class="wcard-icon" style="--c:#7c3ef4"><i class="fas fa-brain"></i></div>
+                        <h3>Mental Health</h3>
+                        <p>Stress management, mindfulness practices, and emotional well-being techniques.</p>
+                        <button class="wellness-action" data-topic="mental-health">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="sleep">
+                        <div class="wcard-icon" style="--c:#0043ce"><i class="fas fa-moon"></i></div>
+                        <h3>Sleep Quality</h3>
+                        <p>Evidence-based strategies to improve sleep hygiene and get restorative rest.</p>
+                        <button class="wellness-action" data-topic="sleep">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="preventive-care">
+                        <div class="wcard-icon" style="--c:#f1c21b"><i class="fas fa-shield-halved"></i></div>
+                        <h3>Preventive Care</h3>
+                        <p>Screening guidelines, vaccinations, and proactive measures to stay healthy.</p>
+                        <button class="wellness-action" data-topic="preventive-care">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="diabetes">
+                        <div class="wcard-icon" style="--c:#ff832b"><i class="fas fa-syringe"></i></div>
+                        <h3>Diabetes Awareness</h3>
+                        <p>Blood sugar management, risk factors, lifestyle changes, and monitoring tips.</p>
+                        <button class="wellness-action" data-topic="diabetes">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="hydration">
+                        <div class="wcard-icon" style="--c:#0072c3"><i class="fas fa-droplet"></i></div>
+                        <h3>Hydration</h3>
+                        <p>Why hydration matters and how to maintain optimal fluid intake daily.</p>
+                        <button class="wellness-action" data-topic="hydration">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="wellness-card" data-topic="womens-health">
+                        <div class="wcard-icon" style="--c:#ee538b"><i class="fas fa-venus"></i></div>
+                        <h3>Women's Health</h3>
+                        <p>Hormonal health, reproductive wellness, bone density, and lifecycle guidance.</p>
+                        <button class="wellness-action" data-topic="womens-health">Ask AI <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── SYMPTOMS CHECKER SECTION ── -->
+        <section id="symptoms-section" class="section">
+            <div class="page-container">
+                <div class="page-header">
+                    <h2><i class="fas fa-stethoscope"></i> Symptom Awareness Tool</h2>
+                    <p>Select symptoms to get general health information. <strong>This is not a diagnosis tool.</strong></p>
+                </div>
+
+                <div class="symptoms-layout">
+                    <div class="symptoms-picker">
+                        <h4>Select Symptoms</h4>
+                        <div class="symptom-search-bar">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <input type="text" id="symptomSearch" placeholder="Search symptoms…">
+                        </div>
+                        <div class="symptom-tags" id="symptomTags">
+                            <button class="symptom-tag" data-symptom="Headache">Headache</button>
+                            <button class="symptom-tag" data-symptom="Fever">Fever</button>
+                            <button class="symptom-tag" data-symptom="Cough">Cough</button>
+                            <button class="symptom-tag" data-symptom="Fatigue">Fatigue</button>
+                            <button class="symptom-tag" data-symptom="Sore throat">Sore throat</button>
+                            <button class="symptom-tag" data-symptom="Runny nose">Runny nose</button>
+                            <button class="symptom-tag" data-symptom="Nausea">Nausea</button>
+                            <button class="symptom-tag" data-symptom="Vomiting">Vomiting</button>
+                            <button class="symptom-tag" data-symptom="Diarrhoea">Diarrhoea</button>
+                            <button class="symptom-tag" data-symptom="Chest pain">Chest pain</button>
+                            <button class="symptom-tag" data-symptom="Shortness of breath">Shortness of breath</button>
+                            <button class="symptom-tag" data-symptom="Dizziness">Dizziness</button>
+                            <button class="symptom-tag" data-symptom="Rash">Rash</button>
+                            <button class="symptom-tag" data-symptom="Joint pain">Joint pain</button>
+                            <button class="symptom-tag" data-symptom="Back pain">Back pain</button>
+                            <button class="symptom-tag" data-symptom="Abdominal pain">Abdominal pain</button>
+                            <button class="symptom-tag" data-symptom="Loss of appetite">Loss of appetite</button>
+                            <button class="symptom-tag" data-symptom="Muscle aches">Muscle aches</button>
+                            <button class="symptom-tag" data-symptom="Swollen lymph nodes">Swollen lymph nodes</button>
+                            <button class="symptom-tag" data-symptom="Night sweats">Night sweats</button>
+                            <button class="symptom-tag" data-symptom="Blurred vision">Blurred vision</button>
+                            <button class="symptom-tag" data-symptom="Frequent urination">Frequent urination</button>
+                        </div>
+                        <div class="selected-symptoms" id="selectedSymptoms">
+                            <h4>Selected: <span id="selectedCount">0</span></h4>
+                            <div class="selected-list" id="selectedList"></div>
+                        </div>
+                        <button class="check-btn" id="checkSymptomsBtn" disabled>
+                            <i class="fas fa-stethoscope"></i> Get AI Health Info
+                        </button>
+                        <button class="clear-symptoms-btn" id="clearSymptomsBtn">
+                            <i class="fas fa-xmark"></i> Clear All
+                        </button>
+                    </div>
+
+                    <div class="symptoms-result" id="symptomsResult">
+                        <div class="result-placeholder">
+                            <i class="fas fa-stethoscope"></i>
+                            <p>Select one or more symptoms and click <strong>"Get AI Health Info"</strong> to receive general health information from the AI.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── ABOUT SECTION ── -->
+        <section id="about-section" class="section">
+            <div class="page-container">
+                <div class="page-header">
+                    <h2><i class="fas fa-circle-info"></i> About HealthAI</h2>
+                    <p>Learn about the technology, capabilities, and important disclaimers.</p>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-card">
+                        <h3><i class="fas fa-microchip"></i> Powered by IBM Bob</h3>
+                        <p>This assistant leverages <strong>IBM Bob</strong>'s Agentic AI framework with the <strong>IBM Granite 3 (granite-3-8b-instruct)</strong> language model hosted on IBM WatsonX, delivering intelligent, context-aware healthcare guidance through natural language conversations.</p>
+                    </div>
+
+                    <div class="about-card">
+                        <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+                        <p>To provide 24/7 accessible, reliable healthcare information and wellness support — helping users make informed health decisions, promoting preventive care, and encouraging professional consultation when necessary.</p>
+                    </div>
+
+                    <div class="about-card">
+                        <h3><i class="fas fa-list-check"></i> Key Capabilities</h3>
+                        <ul>
+                            <li>Natural language healthcare conversations</li>
+                            <li>Personalised wellness &amp; nutrition guidance</li>
+                            <li>Symptom awareness information</li>
+                            <li>Preventive care &amp; healthy lifestyle tips</li>
+                            <li>24/7 availability with conversation memory</li>
+                            <li>Context-aware, evidence-based responses</li>
+                            <li>Agentic AI reasoning framework</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card warning-card">
+                        <h3><i class="fas fa-triangle-exclamation"></i> Important Disclaimer</h3>
+                        <p><strong>This AI assistant is NOT a substitute for professional medical advice, diagnosis, or treatment.</strong></p>
+                        <p>Always seek the advice of your physician or qualified health provider with any questions regarding a medical condition. Never disregard professional medical advice based on information from this tool.</p>
+                        <p>🚨 <strong>In an emergency, call your local emergency services immediately (e.g. 911, 999, 112).</strong></p>
+                    </div>
+
+                    <div class="about-card tech-card">
+                        <h3><i class="fas fa-gears"></i> Technology Stack</h3>
+                        <div class="tech-pills">
+                            <span class="tech-pill">IBM Bob</span>
+                            <span class="tech-pill">IBM Granite 3</span>
+                            <span class="tech-pill">WatsonX AI</span>
+                            <span class="tech-pill">Agentic AI</span>
+                            <span class="tech-pill">NLP</span>
+                            <span class="tech-pill">HTML5 / CSS3</span>
+                            <span class="tech-pill">Vanilla JS</span>
+                            <span class="tech-pill">REST API</span>
+                        </div>
+                        <div class="tech-details">
+                            <p><strong>Project ID:</strong> <code>a0a5cc1f-6385-4952-be11-f9c19c29b36e</code></p>
+                            <p><strong>Model:</strong> <code>ibm/granite-3-8b-instruct</code></p>
+                            <p><strong>Endpoint:</strong> <code>us-south.ml.cloud.ibm.com</code></p>
+                        </div>
+                    </div>
+
+                    <div class="about-card objectives-card">
+                        <h3><i class="fas fa-flag"></i> Project Objectives</h3>
+                        <ul>
+                            <li>Provide 24×7 AI-powered healthcare assistance</li>
+                            <li>Answer health-related queries using natural language</li>
+                            <li>Offer personalised wellness and nutrition recommendations</li>
+                            <li>Promote preventive healthcare and healthy lifestyle practices</li>
+                            <li>Encourage users to seek professional medical advice when required</li>
+                            <li>Enhance healthcare accessibility using IBM Bob &amp; Generative AI</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <span><i class="fas fa-heart-pulse"></i> HealthAI Assistant</span>
+                <span class="footer-sep">·</span>
+                <span>Powered by IBM Bob &amp; Granite 3</span>
+            </div>
+            <div class="footer-right">
+                <span>🚨 Emergency? Call local emergency services immediately.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader-box">
+            <div class="spinner"></div>
+            <p id="loadingText">Connecting to IBM Bob…</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

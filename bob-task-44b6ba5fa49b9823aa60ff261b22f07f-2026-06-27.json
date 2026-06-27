@@ -1,0 +1,948 @@
+{
+  "version": 1,
+  "exportedAt": 1782541367114,
+  "workspace": "file:c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance",
+  "tasks": [
+    {
+      "task": {
+        "id": "44b6ba5fa49b9823aa60ff261b22f07f",
+        "workspace": "file:c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance",
+        "parentId": null,
+        "taskType": "normal",
+        "title": "run the project in the local host",
+        "status": "active",
+        "firstMessage": "run the project in the local host",
+        "version": null,
+        "gitSha": null,
+        "gitBranch": null,
+        "env": {
+          "id": "44b6ba5fa49b9823aa60ff261b22f07f",
+          "workspace": "c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance",
+          "scheme": "file",
+          "query": "",
+          "workspaceName": "Healthcare Assistance",
+          "language": "en",
+          "isPlayground": false,
+          "costEffective": true,
+          "_meta": {
+            "commandSecurityModel": "openai/gpt-oss-20b"
+          },
+          "staticEnvInfo": {
+            "primaryWorkspace": "c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance",
+            "systemInfo": {
+              "platform": "win32",
+              "release": "10.0.22631",
+              "arch": "x64",
+              "shell": "powershell.exe"
+            }
+          },
+          "modeId": "agent"
+        },
+        "costs": {
+          "input": 145546,
+          "output": 8803,
+          "cacheRead": 110125,
+          "cacheWrite": 35409,
+          "cost": 0.38587000000000005,
+          "contextTokens": 41783,
+          "contextWindowBreakdown": {
+            "total": 7924,
+            "reportedTotal": 41783,
+            "breakdown": {
+              "roleDefinition": 34,
+              "staticSections": 546,
+              "skills": 485,
+              "baseRules": 197,
+              "projectRules": 0,
+              "customInstructions": 160,
+              "environment": 73,
+              "toolSystemPrompts": 1393,
+              "toolDefinitions": 5036,
+              "mcpToolDefinitions": 0
+            },
+            "loadedSkills": [],
+            "key": "44b6ba5fa49b9823aa60ff261b22f07f|agent|3165211751|1353398640|5381"
+          }
+        },
+        "messageQueue": null,
+        "approvalConfig": {
+          "autoApprovalEnabled": true,
+          "outsideWorkspaceAllowed": false,
+          "allowed_permissions": [
+            "read"
+          ],
+          "permissionOptions": [],
+          "allowedExecutors": [
+            {
+              "toolId": "execute_command",
+              "approvedCommands": [
+                "cat",
+                "git diff",
+                "git log",
+                "git rev-parse",
+                "git show",
+                "git status",
+                "grep",
+                "head",
+                "tail",
+                "ls",
+                "sort",
+                "wc",
+                "which",
+                "du",
+                "df"
+              ],
+              "deniedCommands": []
+            }
+          ],
+          "taskAllowedMcpTools": []
+        },
+        "lastError": null,
+        "isPinned": false,
+        "createdAt": 1782536746407,
+        "updatedAt": 1782537915019
+      },
+      "messages": [
+        {
+          "id": "4d62521c61891abe15094779e6a263b5",
+          "role": "system",
+          "data": {
+            "role": "system",
+            "content": "<role_definition>\nYou are Bob, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.\n</role_definition>\n\n<investigate_before_answering>\nNever speculate about code you have not opened. If the user references a specific file, you MUST read the file before answering. Investigate and read relevant files before answering questions about the codebase. Never make any claims about code before investigating unless you are certain of the correct answer — give grounded and hallucination-free answers.\n</investigate_before_answering>\n\n<engineering_discipline>\nProduce the minimal change that solves the problem. Do not add features, refactors, or abstractions beyond what was asked. Do not add error handling for scenarios that cannot happen. Do not clean up surrounding code that is unrelated to the task. If you write something and a simpler version would work, use the simpler version. Every changed line should trace directly to the user's request.\n</engineering_discipline>\n\n<tool_use>\n- Choose the most appropriate tool for each step.\n- Tools can be called in parallel when independent, but avoid running operations together that have dependencies (e.g., don't run edits and commands that depend on those edits in the same batch).\n- If a tool fails, address the error before continuing.\n- MCP server tools use IDs formatted as `mcp__<server>__<tool>`. Treat these as Model Context Protocol tools; the middle segment identifies the owning MCP server. Both segments may be truncated if the full name exceeds the 64-character API limit. Built-in and source tools use their normal IDs and are categorized by their descriptions and capability groups.\n- Prefer native file tools (read_file, write_file, search_and_replace, insert_content, list_files) over shell commands for file operations — they need no additional user permissions. Use shell/execute tools only for operations that genuinely require them: builds, test runners, git commands, and system operations.\n</tool_use>\n\n<markdown_rules>\nAll responses should show any language construct or filename reference as a clickable link, exactly as [`filename OR language.declaration()`](relative/file/path.ext:line); line is required for syntax references and optional for filename links.\n</markdown_rules>\n\n<auto_appended_context>\nEach user message may contain an auto-appended <environment_details> section that includes potentially relevant information such as git status, active file, and relevant files modified externally since your last interaction. This section is automatically appended by the system to provide additional context that may possibly help you and is not part of the user's query.\n\nPay close attention to the <external_changes> sub-section — it lists files that were modified, deleted, or created outside of your actions. Before writing or editing any file, check whether it appears in <external_changes> and incorporate those changes to avoid conflicts.\n</auto_appended_context>\n\n<base_rules>\n- Prefer editing tools (apply_diff, search_and_replace, insert_content) over write_file for existing files.\n- When using write_file, provide the COMPLETE file content. Partial updates or placeholders are not acceptable.\n- Be direct and technical. Do not start messages with \"Great\", \"Certainly\", \"Okay\", or \"Sure\".\n- Follow existing code style and project conventions.\n- Use available tools to accomplish tasks efficiently. Do not ask unnecessary follow-up questions.\n- Do not stop when implementation looks complete. Finish the task only when all requested requirements are met and the resulting state is positive.\n- Before reporting final completion, run the relevant validation for your changes. Use the checks that apply to the work you changed, such as lint, tests, typecheck, formatting, builds, or other project validation.\n- Work is done when the changed work and any affected project state pass the required validation with no new warnings, failures, or unfinished requirements.\n</base_rules>\n\nYou have access to skills that provide specialized instructions for specific tasks. Review the available skills below. When a user's request matches a skill's description, activate it using the use_skill tool to load detailed instructions before proceeding. Only activate skills that are clearly relevant to the current task. Activate each skill once per current context window. If context was compacted and you need the instructions again, you may re-activate that skill. Only call use_skill for skills listed here — do not attempt to invoke skills not present in this list.\n<available_skills>\n  <skill>\n    <name>create-skill</name>\n    <description>Guide for creating a new Bob skill (SKILL.md) — covers the frontmatter schema, name rules, file location, and gotchas. Use when the user wants to author, create, or scaffold a skill.</description>\n  </skill>\n  <skill>\n    <name>create-mode</name>\n    <description>Guide for creating a new custom Bob mode (custom_modes.yaml) — covers the schema, permission groups, roleDefinition, and file location. Use when the user wants to author, create, or scaffold a mode or persona.</description>\n  </skill>\n  <skill>\n    <name>configure-mcp</name>\n    <description>Add a new MCP server or diagnose an existing one — covers local vs remote transport, system dependency checks (node, docker, podman, python, uv), config schema validation, secrets handling, and scope. Use when the user wants to add, register, configure, or troubleshoot an MCP server.</description>\n  </skill>\n  <skill>\n    <name>build-mcp-server</name>\n    <description>Guide for building a custom MCP server from scratch — covers project scaffolding, the v2 registerTool/registerResource/registerPrompt API, API key and OAuth authentication patterns, building and registering the server. Use when the user wants to create, build, or write a custom MCP server.</description>\n  </skill>\n  <skill>\n    <name>xlsx-insights</name>\n    <description>Use this skill when the user asks for analysis, extraction, or insights from an Excel (.xlsx) workbook. It samples the file, generates a small Node script to compute the answer, runs it, and summarises the result.</description>\n  </skill>\n</available_skills>\n\n<user_custom_instructions>\nThe following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.\n\nLanguage Preference:\nYou should always speak and think in the \"English\" (en) language unless the user gives you instructions below to do otherwise.\n\nMode-specific Instructions:\nYou can write, modify, and refactor code in any programming language or framework. Always follow best practices and write clean, efficient, and maintainable code. Make sure to test your code thoroughly before submitting it. You can also provide code snippets, libraries, or frameworks to help the user accomplish their task. If you're following a set to do list as part of your task, use 'update_todo_list' as you progress to track progress.\n</user_custom_instructions>\n\n<environment_info>\n## Workspace Info\nThe currently active workspace folder is c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance\nUse file paths relative to this directory.\n## Command Execution Environment\nPlatform: win32\nRelease: 10.0.22631\nArchitecture: x64\nShell: powershell.exe\n</environment_info>\n\nYou can get information about available symbols by using the `GetSymbolsOverview` tool for finding top-level symbols in a file,\nor by using `FindSymbol` if you already know the symbol's name path. You generally try to read as little code as possible\nwhile still solving your task, meaning you only read the bodies when you need to, and after you have found the symbol you want to edit.\nFor example, if you are working with python code and already know that you need to read the body of the constructor of the class Foo, you can directly\nuse `FindSymbol` with the name path `Foo/__init__` and `include_body: true`. If you don't know yet which methods in `Foo` you need to read or edit,\nyou can use `FindSymbol` with the name path `Foo`, `include_body: false` and `depth: 1` to get all (top-level) methods of `Foo` before proceeding\nto read the desired methods with `include_body: true`\nYou can understand relationships between symbols by using the `FindReferencingSymbols` tool.\n\n# create_html_artifact — one-pager output\nUse ONLY when an HTML one-pager makes information substantially more consumable than markdown — reports, tables, dashboards. NEVER for short answers or content that reads naturally inline.\nTool call must be the LAST action in the turn; keep chat to one or two sentences.\nProduce a single self-contained HTML+CSS document. Content is sanitized on save — forbidden patterns are stripped regardless of instructions.\nEnd with a small muted \"Made with IBM Bob\" footer before `</body>` (centred, ~12px, thin top border).\n\n## Never allowed — always stripped, even if instructed\n<script>, inline event handlers (onclick/onload/…), <iframe>/<frame>/<frameset>/<object>/<embed>/<applet>/<portal>, <form>, <link>, <base>, <meta http-equiv>, javascript:/vbscript: URLs, protocol-relative URLs (//…), external URLs in src/poster/… attributes, @import in <style> blocks, url() in <style> blocks unless it is a data: URI.\n<a href> to external sites is fine. Inline data: image URIs are fine.\n\n## Design\nSingle column, max-width ~760px, centred. No animations, gradients, shadows, emojis, or decorative icons. SVG only for data visualisation.\nFont: `-apple-system, \"Segoe UI\", system-ui, sans-serif`, ~14–15px, line-height ~1.6.\nPalette: bg `#ffffff`, surface `#f7f8fa`, border `#e5e7eb`, text `#1f2328`, muted `#57606a`, accent `#3b82d4` (sparingly), secondary `#7c5cd8` (rarely).\n\nRe-use the same `id` to publish a new version.\n\n# Mode Switching\n\nYou can switch between different modes using the switch_mode tool. Each mode provides access to different capabilities and tools optimized for specific types of tasks.\n\n<available_modes>\n  <mode>\n    <name>Agent</name>\n    <id>agent</id>\n    <when_to_use>Use this mode when you need to write, modify, or refactor code. Ideal for implementing features, fixing bugs, creating new files, or making code improvements across any programming language or framework.</when_to_use>\n    <available_tools>GetSymbolsOverview, FindSymbol, FindReferencingSymbols, use_skill, apply_diff, create_html_artifact, insert_content, list_files, read_file, read_xlsx, search_and_replace, update_todo_list, switch_mode, write_file, execute_command, glob, grep, spawn_subagent, ask_followup_question, start_subtask, start_workflow</available_tools>\n  </mode>\n  <mode>\n    <name>Plan</name>\n    <id>plan</id>\n    <when_to_use>Use this mode when you need to plan, design, or strategize before implementation. Perfect for breaking down complex problems, creating technical specifications, designing system architecture, or brainstorming solutions before coding.</when_to_use>\n    <available_tools>GetSymbolsOverview, FindSymbol, FindReferencingSymbols, use_skill, apply_diff, insert_content, list_files, read_file, read_xlsx, search_and_replace, switch_mode, write_file, glob, grep, spawn_subagent, ask_followup_question, start_workflow</available_tools>\n  </mode>\n  <mode>\n    <name>Ask</name>\n    <id>ask</id>\n    <when_to_use>Use this mode when you need explanations, documentation, or answers to technical questions. Best for understanding concepts, analyzing existing code, getting recommendations, or learning about technologies without making changes.</when_to_use>\n    <available_tools>GetSymbolsOverview, FindSymbol, FindReferencingSymbols, use_skill, list_files, read_file, read_xlsx, switch_mode, glob, grep, spawn_subagent, ask_followup_question, start_workflow</available_tools>\n  </mode>\n</available_modes>\n\n# glob — file search\nUse `glob` to find files by name pattern (e.g. \"**/*.ts\", \"src/**/*.test.ts\"). Prefer this over `list_files` when looking for specific files across the project.\nOnly fall back to `list_files` when you need to browse a single directory's structure.\n\n# grep — content search\nUse `grep` to find code by content using regex patterns. Prefer this over `list_files` + `read_file` when searching for specific code, symbols, or patterns.\nUse `read_file` only after grep tells you which file and lines to look at.\n\n# Subagents\nYou have access to `spawn_subagent` which creates an independent agent with its own context.\n\n**Default: do the work yourself.** Most tasks are faster and cheaper without a subagent.\nOnly consider a subagent when ALL of these apply:\n- The task is clearly self-contained and only needs a summary back\n- It would add significant irrelevant content to your context\n- You cannot accomplish it with 1-2 direct tool calls\n\nAvailable types:\n- \"explore\": Explore codebase (read tools, explorer model)\n- \"general\": Full tools, default model\n\n**fork_context**: Set to true when the subagent needs to understand prior conversation — e.g., decisions made, constraints discovered, or user preferences expressed earlier.\nLeave false (default) when the description alone is sufficient context.\n\nDo NOT use subagents for:\n- Simple file reads, searches, or single-tool operations\n- Tasks where you already have relevant context\n- Quick lookups that would take fewer turns done directly",
+            "_meta": {
+              "mode": {
+                "id": "agent",
+                "name": "Agent",
+                "description": "Take your idea, or plan, and bring it to life",
+                "groups": [
+                  "read",
+                  "edit",
+                  "execute",
+                  "mcp",
+                  "skill",
+                  "todo",
+                  "artifact",
+                  "subtask",
+                  "subagent",
+                  "mode"
+                ],
+                "roleDefinition": "You are Bob, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.",
+                "customInstructions": "You can write, modify, and refactor code in any programming language or framework. Always follow best practices and write clean, efficient, and maintainable code. Make sure to test your code thoroughly before submitting it. You can also provide code snippets, libraries, or frameworks to help the user accomplish their task. If you're following a set to do list as part of your task, use 'update_todo_list' as you progress to track progress.",
+                "whenToUse": "Use this mode when you need to write, modify, or refactor code. Ideal for implementing features, fixing bugs, creating new files, or making code improvements across any programming language or framework.",
+                "scope": "builtin",
+                "sourceId": "bob",
+                "sourceName": "Bob"
+              },
+              "timestamp": 1782537218304
+            },
+            "id": "4d62521c61891abe15094779e6a263b5"
+          },
+          "createdAt": 1782537761738
+        },
+        {
+          "id": "a486da3da700385dfc0236edbf2e253f",
+          "role": "user",
+          "data": {
+            "role": "user",
+            "content": "<environment_details>\n<active_file>\nActive file: c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance\\package-lock.json\n</active_file>\n</environment_details>\n\n\n<user_query>\nrun the project in the local host\n</user_query>",
+            "availableTools": [
+              "GetSymbolsOverview",
+              "FindSymbol",
+              "FindReferencingSymbols",
+              "use_skill",
+              "apply_diff",
+              "create_html_artifact",
+              "insert_content",
+              "list_files",
+              "read_file",
+              "read_xlsx",
+              "search_and_replace",
+              "update_todo_list",
+              "switch_mode",
+              "write_file",
+              "execute_command",
+              "glob",
+              "grep",
+              "spawn_subagent",
+              "ask_followup_question",
+              "start_subtask",
+              "start_workflow"
+            ],
+            "_meta": {
+              "mentionEditorState": {
+                "root": {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "run the project in the local host",
+                          "type": "text",
+                          "version": 1
+                        }
+                      ],
+                      "direction": null,
+                      "format": "",
+                      "indent": 0,
+                      "type": "paragraph",
+                      "version": 1,
+                      "textFormat": 0,
+                      "textStyle": ""
+                    }
+                  ],
+                  "direction": null,
+                  "format": "",
+                  "indent": 0,
+                  "type": "root",
+                  "version": 1
+                }
+              },
+              "gitSnapshot": [],
+              "mask": "run the project in the local host",
+              "mode": {
+                "id": "agent",
+                "name": "Agent",
+                "description": "Take your idea, or plan, and bring it to life",
+                "groups": [
+                  "read",
+                  "edit",
+                  "execute",
+                  "mcp",
+                  "skill",
+                  "todo",
+                  "artifact",
+                  "subtask",
+                  "subagent",
+                  "mode"
+                ],
+                "roleDefinition": "You are Bob, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.",
+                "customInstructions": "You can write, modify, and refactor code in any programming language or framework. Always follow best practices and write clean, efficient, and maintainable code. Make sure to test your code thoroughly before submitting it. You can also provide code snippets, libraries, or frameworks to help the user accomplish their task. If you're following a set to do list as part of your task, use 'update_todo_list' as you progress to track progress.",
+                "whenToUse": "Use this mode when you need to write, modify, or refactor code. Ideal for implementing features, fixing bugs, creating new files, or making code improvements across any programming language or framework.",
+                "scope": "builtin",
+                "sourceId": "bob",
+                "sourceName": "Bob"
+              },
+              "timestamp": 1782537218304
+            },
+            "id": "a486da3da700385dfc0236edbf2e253f"
+          },
+          "createdAt": 1782537761740
+        },
+        {
+          "id": "68e15b1433e2a5ad309ef6474bb6ce7d",
+          "role": "assistant",
+          "data": {
+            "role": "assistant",
+            "content": "Let me first explore the project structure to understand what kind of project this is.",
+            "id": "68e15b1433e2a5ad309ef6474bb6ce7d",
+            "_meta": {
+              "timestamp": 1782537220393,
+              "spend": {
+                "input": 11070,
+                "output": 55,
+                "cacheRead": 10331,
+                "cacheWrite": 738,
+                "cost": 0.027812,
+                "contextTokens": 11125,
+                "reasoningTokens": 0
+              }
+            },
+            "toolCalls": [
+              {
+                "id": "tooluse_kNKnFtWihZv3Z5kWz395R2",
+                "name": "list_files",
+                "arguments": {
+                  "path": "."
+                },
+                "isError": false
+              },
+              {
+                "id": "tooluse_PD6ZA48CAukEYBxsRSrnen",
+                "name": "read_file",
+                "arguments": {
+                  "path": "package.json"
+                },
+                "isError": false
+              },
+              {
+                "id": "tooluse_bRtaksPUPakmyEz9SEfV8G",
+                "name": "read_file",
+                "arguments": {
+                  "path": "server.js"
+                },
+                "isError": false
+              }
+            ]
+          },
+          "createdAt": 1782537761740
+        },
+        {
+          "id": "d7b423632ad38be4a795ce0cd37b5efd",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Directory listing for .:\n\n.gitignore\nconfig.json\nindex.html\nnode_modules\\\npackage-lock.json\npackage.json\nQUICKSTART.md\nREADME.md\nscript.js\nserver.js\nstyles.css",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_kNKnFtWihZv3Z5kWz395R2",
+                "name": "list_files",
+                "arguments": {
+                  "path": "."
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "List Files in {path}",
+                "error": "Failed to list files in {path}",
+                "running": "Listing files in {path}",
+                "success": "Listed files in {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "durationMs": 5,
+              "timestamp": 1782537220409
+            },
+            "id": "d7b423632ad38be4a795ce0cd37b5efd"
+          },
+          "createdAt": 1782537761740
+        },
+        {
+          "id": "73209999bb872c9ff5fa96a36e13a7bc",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Contents of file package.json:\n\n1 | {\n2 |   \"name\": \"ai-healthcare-assistant\",\n3 |   \"version\": \"1.0.0\",\n4 |   \"description\": \"AI-Powered Medical Chatbot using IBM Watson for Intelligent Healthcare Assistance\",\n5 |   \"main\": \"index.html\",\n6 |   \"scripts\": {\n7 |     \"start\": \"node server.js\",\n8 |     \"dev\": \"node server.js\",\n9 |     \"test\": \"echo \\\"No tests configured\\\" && exit 0\"\n10 |   },\n11 |   \"keywords\": [\n12 |     \"healthcare\",\n13 |     \"ai\",\n14 |     \"chatbot\",\n15 |     \"ibm-watson\",\n16 |     \"medical-assistant\",\n17 |     \"wellness\",\n18 |     \"health-tech\",\n19 |     \"artificial-intelligence\",\n20 |     \"natural-language-processing\"\n21 |   ],\n22 |   \"author\": \"Healthcare AI Team\",\n23 |   \"license\": \"MIT\",\n24 |   \"repository\": {\n25 |     \"type\": \"git\",\n26 |     \"url\": \"https://github.com/yourusername/ai-healthcare-assistant.git\"\n27 |   },\n28 |   \"bugs\": {\n29 |     \"url\": \"https://github.com/yourusername/ai-healthcare-assistant/issues\"\n30 |   },\n31 |   \"homepage\": \"https://github.com/yourusername/ai-healthcare-assistant#readme\",\n32 |   \"dependencies\": {\n33 |     \"express\": \"^4.18.2\"\n34 |   },\n35 |   \"devDependencies\": {\n36 |     \"http-server\": \"^14.1.1\"\n37 |   },\n38 |   \"engines\": {\n39 |     \"node\": \">=14.0.0\",\n40 |     \"npm\": \">=6.0.0\"\n41 |   }\n42 | }",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_PD6ZA48CAukEYBxsRSrnen",
+                "name": "read_file",
+                "arguments": {
+                  "path": "package.json"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Read File {path}",
+                "error": "Failed to read file {path}",
+                "running": "Reading file {path}",
+                "success": "Read file {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "fileMtimes": {
+                "file:///c%3A/Users/kavya/OneDrive/Desktop/Healthcare%20Assistance/package.json": 1782492898864
+              },
+              "durationMs": 7,
+              "timestamp": 1782537222067
+            },
+            "id": "73209999bb872c9ff5fa96a36e13a7bc"
+          },
+          "createdAt": 1782537761740
+        },
+        {
+          "id": "60517dd97a511b4567208897cfa62af0",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Contents of file server.js:\n\n1 | // ═══════════════════════════════════════════════\n2 | //  HealthAI — Express Backend Proxy\n3 | //  Proxies IBM IAM token + WatsonX API calls\n4 | //  so the browser never touches IBM directly.\n5 | // ═══════════════════════════════════════════════\n6 | \n7 | const express = require('express');\n8 | const path    = require('path');\n9 | \n10 | const app  = express();\n11 | const PORT = process.env.PORT || 3000;\n12 | \n13 | // ── IBM WatsonX config (server-side only) ──\n14 | const IBM_CONFIG = {\n15 |     projectId: 'a0a5cc1f-6385-4952-be11-f9c19c29b36e',\n16 |     apiKey:    's2tJtVXy9V9H8iMjsMo_aGtMyIGMElrR-IYzlSecKcyP',\n17 |     endpoint:  'https://us-south.ml.cloud.ibm.com',\n18 |     modelId:   'ibm/granite-3-8b-instruct'\n19 | };\n20 | \n21 | // ── Token cache ──\n22 | let cachedToken  = null;\n23 | let tokenExpiry  = 0;\n24 | \n25 | app.use(express.json());\n26 | \n27 | // Serve static frontend files\n28 | app.use(express.static(path.join(__dirname)));\n29 | \n30 | // ── POST /api/chat  ──────────────────────────\n31 | // Body: { prompt: string, parameters: object }\n32 | app.post('/api/chat', async (req, res) => {\n33 |     try {\n34 |         const { prompt, parameters } = req.body;\n35 |         if (!prompt) return res.status(400).json({ error: 'prompt is required' });\n36 | \n37 |         const token = await getAccessToken();\n38 | \n39 |         const ibmRes = await fetch(\n40 |             `${IBM_CONFIG.endpoint}/ml/v1/text/generation?version=2023-05-29`,\n41 |             {\n42 |                 method:  'POST',\n43 |                 headers: {\n44 |                     'Content-Type':  'application/json',\n45 |                     'Authorization': `Bearer ${token}`,\n46 |                     'Accept':        'application/json'\n47 |                 },\n48 |                 body: JSON.stringify({\n49 |                     model_id:   IBM_CONFIG.modelId,\n50 |                     project_id: IBM_CONFIG.projectId,\n51 |                     input:      prompt,\n52 |                     parameters: parameters || {\n53 |                         decoding_method:    'greedy',\n54 |                         max_new_tokens:     1024,\n55 |                         min_new_tokens:     10,\n56 |                         stop_sequences:     ['<|user|>', '<|system|>'],\n57 |                         repetition_penalty: 1.05\n58 |                     }\n59 |                 })\n60 |             }\n61 |         );\n62 | \n63 |         if (!ibmRes.ok) {\n64 |             const errText = await ibmRes.text();\n65 |             console.error('WatsonX error:', ibmRes.status, errText);\n66 |             return res.status(ibmRes.status).json({ error: errText });\n67 |         }\n68 | \n69 |         const data = await ibmRes.json();\n70 |         res.json(data);\n71 | \n72 |     } catch (err) {\n73 |         console.error('Proxy /api/chat error:', err.message);\n74 |         res.status(500).json({ error: err.message });\n75 |     }\n76 | });\n77 | \n78 | // ── Internal: fetch + cache IAM token ────────\n79 | async function getAccessToken() {\n80 |     const now = Date.now();\n81 |     if (cachedToken && now < tokenExpiry - 60_000) return cachedToken;\n82 | \n83 |     const iamRes = await fetch('https://iam.cloud.ibm.com/identity/token', {\n84 |         method:  'POST',\n85 |         headers: {\n86 |             'Content-Type': 'application/x-www-form-urlencoded',\n87 |             'Accept':       'application/json'\n88 |         },\n89 |         body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${IBM_CONFIG.apiKey}`\n90 |     });\n91 | \n92 |     if (!iamRes.ok) {\n93 |         const txt = await iamRes.text();\n94 |         throw new Error(`IAM token error ${iamRes.status}: ${txt}`);\n95 |     }\n96 | \n97 |     const data    = await iamRes.json();\n98 |     cachedToken   = data.access_token;\n99 |     tokenExpiry   = now + (data.expires_in * 1000);\n100 |     return cachedToken;\n101 | }\n102 | \n103 | // ── Catch-all: serve index.html for SPA ──────\n104 | app.get('*', (req, res) => {\n105 |     res.sendFile(path.join(__dirname, 'index.html'));\n106 | });\n107 | \n108 | app.listen(PORT, () => {\n109 |     console.log(`\\n  HealthAI server running at http://localhost:${PORT}\\n`);\n110 | });\n111 | ",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_bRtaksPUPakmyEz9SEfV8G",
+                "name": "read_file",
+                "arguments": {
+                  "path": "server.js"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Read File {path}",
+                "error": "Failed to read file {path}",
+                "running": "Reading file {path}",
+                "success": "Read file {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "fileMtimes": {
+                "file:///c%3A/Users/kavya/OneDrive/Desktop/Healthcare%20Assistance/server.js": 1782492808289
+              },
+              "durationMs": 106,
+              "timestamp": 1782537223768
+            },
+            "id": "60517dd97a511b4567208897cfa62af0"
+          },
+          "createdAt": 1782537761741
+        },
+        {
+          "id": "145bb90b119694e48216820783e09a16",
+          "role": "assistant",
+          "data": {
+            "role": "assistant",
+            "content": "This is a Node.js + Express project. The `node_modules` folder is already present, so dependencies are installed. Let me start the server:",
+            "id": "145bb90b119694e48216820783e09a16",
+            "_meta": {
+              "timestamp": 1782537226263,
+              "spend": {
+                "input": 12660,
+                "output": 92,
+                "cacheRead": 10331,
+                "cacheWrite": 2328,
+                "cost": 0.03188,
+                "contextTokens": 12752,
+                "reasoningTokens": 0
+              }
+            },
+            "toolCalls": [
+              {
+                "id": "tooluse_Ikry6dSwrDCxg8GD87u8D1",
+                "name": "execute_command",
+                "arguments": {
+                  "command": "node --version; npm --version"
+                },
+                "isError": true
+              }
+            ]
+          },
+          "createdAt": 1782537761741
+        },
+        {
+          "id": "408fd6d4f14eaf61ea6060b9a02cb6a7",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Error from tool execute_command: Exit code: 1\n\nStdout:\nv24.18.0\n\nStderr:\nnpm : File C:\\Program Files\\nodejs\\npm.ps1 cannot be loaded because running scripts is disabled on this system. For \r\nmore information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.\r\nAt line:1 char:17\r\n+ node --version; npm --version\r\n+                 ~~~\r\n    + CategoryInfo          : SecurityError: (:) [], PSSecurityException\r\n    + FullyQualifiedErrorId : UnauthorizedAccess",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_Ikry6dSwrDCxg8GD87u8D1",
+                "name": "execute_command",
+                "arguments": {
+                  "command": "node --version; npm --version"
+                },
+                "isError": true
+              },
+              "labels": {
+                "displayName": "Execute Command",
+                "error": "Command failed",
+                "running": "Executing",
+                "success": "Ran",
+                "runningLong": [
+                  "Still running...",
+                  "Command in progress...",
+                  "Some commands take a while...",
+                  "Waiting on the process...",
+                  "The terminal is thinking...",
+                  "Not all commands are fast...",
+                  "Patiently waiting..."
+                ]
+              },
+              "permission": "execute",
+              "commandUse": {
+                "unverifiable": false,
+                "commands": [
+                  "node --version",
+                  "npm --version"
+                ],
+                "requiresSecurityApproval": false,
+                "commandVariants": [
+                  "node --version",
+                  "node",
+                  "npm --version",
+                  "npm"
+                ]
+              },
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "cwd": ".",
+              "durationMs": 7643,
+              "timestamp": 1782537233993
+            },
+            "id": "408fd6d4f14eaf61ea6060b9a02cb6a7"
+          },
+          "createdAt": 1782537761741
+        },
+        {
+          "id": "7b81e2479f641aae42849f91235ab823",
+          "role": "assistant",
+          "data": {
+            "role": "assistant",
+            "content": "Node.js v24 is available. The `npm` script check failed due to PowerShell execution policy, but that won't affect running the server directly with `node`. Let me start it:",
+            "id": "7b81e2479f641aae42849f91235ab823",
+            "_meta": {
+              "timestamp": 1782537236440,
+              "spend": {
+                "input": 13104,
+                "output": 170,
+                "cacheRead": 9942,
+                "cacheWrite": 3159,
+                "cost": 0.033185,
+                "contextTokens": 13274,
+                "reasoningTokens": 0
+              },
+              "stopReason": "user_cancelled"
+            },
+            "stop": true,
+            "toolCalls": [
+              {
+                "id": "tooluse_IRw6OlPmaIhNQoGeIUv4ai",
+                "name": "execute_command",
+                "arguments": {
+                  "command": "node server.js"
+                },
+                "isError": true
+              }
+            ]
+          },
+          "createdAt": 1782537761741
+        },
+        {
+          "id": "4614b563638e3e846ff3aa8bd030e122",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Tool call to execute_command was cancelled.",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_IRw6OlPmaIhNQoGeIUv4ai",
+                "name": "execute_command",
+                "arguments": {
+                  "command": "node server.js"
+                },
+                "isError": true
+              },
+              "labels": {
+                "displayName": "Execute Command",
+                "error": "Command failed",
+                "running": "Executing",
+                "success": "Ran",
+                "runningLong": [
+                  "Still running...",
+                  "Command in progress...",
+                  "Some commands take a while...",
+                  "Waiting on the process...",
+                  "The terminal is thinking...",
+                  "Not all commands are fast...",
+                  "Patiently waiting..."
+                ]
+              },
+              "permission": "execute",
+              "commandUse": {
+                "unverifiable": false,
+                "commands": [
+                  "node server.js"
+                ],
+                "requiresSecurityApproval": false,
+                "commandVariants": [
+                  "node server.js",
+                  "node"
+                ]
+              },
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "durationMs": 524613,
+              "timestamp": 1782537761735
+            },
+            "id": "4614b563638e3e846ff3aa8bd030e122"
+          },
+          "createdAt": 1782537761743
+        },
+        {
+          "id": "e8844a3ca1fd6cdef0f2ff76d75994f2",
+          "role": "user",
+          "data": {
+            "role": "user",
+            "content": "<environment_details>\n<active_file>\nActive file: c:\\Users\\kavya\\OneDrive\\Desktop\\Healthcare Assistance\\package.json\n</active_file>\n</environment_details>\n\n\n<user_query>\nArchitecture blueprint for IBM bob\n</user_query>",
+            "availableTools": [
+              "GetSymbolsOverview",
+              "FindSymbol",
+              "FindReferencingSymbols",
+              "use_skill",
+              "apply_diff",
+              "create_html_artifact",
+              "insert_content",
+              "list_files",
+              "read_file",
+              "read_xlsx",
+              "search_and_replace",
+              "update_todo_list",
+              "switch_mode",
+              "write_file",
+              "execute_command",
+              "glob",
+              "grep",
+              "spawn_subagent",
+              "ask_followup_question",
+              "start_subtask",
+              "start_workflow"
+            ],
+            "_meta": {
+              "mentionEditorState": {
+                "root": {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "detail": 0,
+                          "format": 0,
+                          "mode": "normal",
+                          "style": "",
+                          "text": "Architecture blueprint for IBM bob",
+                          "type": "text",
+                          "version": 1
+                        }
+                      ],
+                      "direction": null,
+                      "format": "",
+                      "indent": 0,
+                      "type": "paragraph",
+                      "version": 1,
+                      "textFormat": 0,
+                      "textStyle": ""
+                    }
+                  ],
+                  "direction": null,
+                  "format": "",
+                  "indent": 0,
+                  "type": "root",
+                  "version": 1
+                }
+              },
+              "mask": "Architecture blueprint for IBM bob",
+              "mode": {
+                "id": "agent",
+                "name": "Agent",
+                "description": "Take your idea, or plan, and bring it to life",
+                "groups": [
+                  "read",
+                  "edit",
+                  "execute",
+                  "mcp",
+                  "skill",
+                  "todo",
+                  "artifact",
+                  "subtask",
+                  "subagent",
+                  "mode"
+                ],
+                "roleDefinition": "You are Bob, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.",
+                "customInstructions": "You can write, modify, and refactor code in any programming language or framework. Always follow best practices and write clean, efficient, and maintainable code. Make sure to test your code thoroughly before submitting it. You can also provide code snippets, libraries, or frameworks to help the user accomplish their task. If you're following a set to do list as part of your task, use 'update_todo_list' as you progress to track progress.",
+                "whenToUse": "Use this mode when you need to write, modify, or refactor code. Ideal for implementing features, fixing bugs, creating new files, or making code improvements across any programming language or framework.",
+                "scope": "builtin",
+                "sourceId": "bob",
+                "sourceName": "Bob"
+              },
+              "timestamp": 1782537796922
+            },
+            "id": "e8844a3ca1fd6cdef0f2ff76d75994f2"
+          },
+          "createdAt": 1782537796912
+        },
+        {
+          "id": "975a84a8877d1225552ec72a3b9b3113",
+          "role": "assistant",
+          "data": {
+            "role": "assistant",
+            "content": "Calling tools",
+            "_meta": {
+              "hide": true,
+              "timestamp": 1782537799802
+            },
+            "id": "975a84a8877d1225552ec72a3b9b3113",
+            "toolCalls": [
+              {
+                "id": "tooluse_9e8G2LCPNFy1kBYcGeGrrC",
+                "name": "read_file",
+                "arguments": {
+                  "path": "config.json"
+                },
+                "isError": false
+              },
+              {
+                "id": "tooluse_wYi0TekuuaIFOtNBlgVugM",
+                "name": "read_file",
+                "arguments": {
+                  "path": "styles.css"
+                },
+                "isError": false
+              },
+              {
+                "id": "tooluse_g0vAGto2d7ccfQvd2DD4Jh",
+                "name": "read_file",
+                "arguments": {
+                  "path": "index.html"
+                },
+                "isError": false
+              },
+              {
+                "id": "tooluse_ONetifqzc01MilX4WtSXLD",
+                "name": "read_file",
+                "arguments": {
+                  "path": "script.js"
+                },
+                "isError": false
+              }
+            ]
+          },
+          "createdAt": 1782537802922
+        },
+        {
+          "id": "318af944b5d0c5919f2f209f95a78a7d",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Contents of file config.json:\n\n1 | {\n2 |   \"application\": {\n3 |     \"name\": \"AI Healthcare Assistant\",\n4 |     \"version\": \"1.0.0\",\n5 |     \"description\": \"AI-Powered Medical Chatbot using IBM Watson for Intelligent Healthcare Assistance\",\n6 |     \"author\": \"Healthcare AI Team\",\n7 |     \"license\": \"MIT\"\n8 |   },\n9 |   \"ibm_watson\": {\n10 |     \"project_id\": \"a0a5cc1f-6385-4952-be11-f9c19c29b36e\",\n11 |     \"endpoint\": \"https://us-south.ml.cloud.ibm.com\",\n12 |     \"model_id\": \"ibm/granite-3-8b-instruct\",\n13 |     \"api_version\": \"2023-05-29\",\n14 |     \"region\": \"us-south\"\n15 |   },\n16 |   \"model_parameters\": {\n17 |     \"decoding_method\": \"greedy\",\n18 |     \"max_new_tokens\": 900,\n19 |     \"min_new_tokens\": 0,\n20 |     \"repetition_penalty\": 1.0,\n21 |     \"temperature\": 0.7,\n22 |     \"top_p\": 1.0,\n23 |     \"top_k\": 50\n24 |   },\n25 |   \"features\": {\n26 |     \"chat\": true,\n27 |     \"wellness_dashboard\": true,\n28 |     \"quick_actions\": true,\n29 |     \"conversation_history\": true,\n30 |     \"local_storage\": true,\n31 |     \"responsive_design\": true\n32 |   },\n33 |   \"ui_settings\": {\n34 |     \"theme\": \"healthcare\",\n35 |     \"primary_color\": \"#0f62fe\",\n36 |     \"secondary_color\": \"#0043ce\",\n37 |     \"max_conversation_history\": 20,\n38 |     \"typing_indicator\": true,\n39 |     \"message_timestamps\": true\n40 |   },\n41 |   \"security\": {\n42 |     \"https_only\": true,\n43 |     \"cors_enabled\": true,\n44 |     \"rate_limiting\": false,\n45 |     \"data_encryption\": false\n46 |   },\n47 |   \"disclaimer\": {\n48 |     \"show_on_startup\": true,\n49 |     \"text\": \"This AI assistant provides general health information only. Always consult healthcare professionals for medical advice.\"\n50 |   }\n51 | }",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_9e8G2LCPNFy1kBYcGeGrrC",
+                "name": "read_file",
+                "arguments": {
+                  "path": "config.json"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Read File {path}",
+                "error": "Failed to read file {path}",
+                "running": "Reading file {path}",
+                "success": "Read file {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "fileMtimes": {
+                "file:///c%3A/Users/kavya/OneDrive/Desktop/Healthcare%20Assistance/config.json": 1782488263494
+              },
+              "durationMs": 34,
+              "timestamp": 1782537799802
+            },
+            "id": "318af944b5d0c5919f2f209f95a78a7d"
+          },
+          "createdAt": 1782537802925
+        },
+        {
+          "id": "e8328cd2b17ac1800e98dd3b6a5851d5",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Contents of file styles.css:\n\n1 | /* ═══════════════════════════════════════════════\n2 |    HealthAI – IBM Bob Healthcare Assistant\n3 |    Design System: IBM Carbon-inspired\n4 |    ═══════════════════════════════════════════════ */\n5 | \n6 | /* ── Reset & Tokens ── */\n7 | *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }\n8 | \n9 | :root {\n10 |     /* Brand */\n11 |     --blue-60:      #0f62fe;\n12 |     --blue-70:      #0043ce;\n13 |     --blue-80:      #002d9c;\n14 |     --green-50:     #24a148;\n15 |     --green-60:     #198038;\n16 |     --red-60:       #da1e28;\n17 |     --yellow-30:    #f1c21b;\n18 |     --purple-60:    #7c3ef4;\n19 |     --teal-50:      #009d9a;\n20 | \n21 |     /* Neutrals */\n22 |     --gray-10:      #f4f4f4;\n23 |     --gray-20:      #e0e0e0;\n24 |     --gray-30:      #c6c6c6;\n25 |     --gray-60:      #6f6f6f;\n26 |     --gray-80:      #393939;\n27 |     --gray-100:     #161616;\n28 |     --white:        #ffffff;\n29 | \n30 |     /* Semantic aliases */\n31 |     --bg-page:      #f0f2f5;\n32 |     --bg-surface:   var(--white);\n33 |     --bg-overlay:   rgba(22,22,22,0.82);\n34 |     --border:       var(--gray-20);\n35 |     --text-primary: var(--gray-100);\n36 |     --text-muted:   var(--gray-60);\n37 |     --accent:       var(--blue-60);\n38 |     --accent-dark:  var(--blue-70);\n39 | \n40 |     /* Gradients */\n41 |     --grad-brand:   linear-gradient(135deg, #0f62fe 0%, #0043ce 55%, #002d9c 100%);\n42 |     --grad-health:  linear-gradient(135deg, #24a148 0%, #009d9a 100%);\n43 |     --grad-card:    linear-gradient(145deg, var(--white) 0%, #f4f7ff 100%);\n44 | \n45 |     /* Shadows */\n46 |     --shadow-sm:    0 1px 4px rgba(0,0,0,.08);\n47 |     --shadow-md:    0 4px 12px rgba(0,0,0,.1);\n48 |     --shadow-lg:    0 8px 24px rgba(0,0,0,.14);\n49 |     --shadow-focus: 0 0 0 3px rgba(15,98,254,.25);\n50 | \n51 |     /* Radii / spacing */\n52 |     --radius-sm:    6px;\n53 |     --radius:       10px;\n54 |     --radius-lg:    16px;\n55 |     --radius-full:  9999px;\n56 | }\n57 | \n58 | /* ── Base ── */\n59 | html { scroll-behavior: smooth; }\n60 | body {\n61 |     font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', system-ui, sans-serif;\n62 |     font-size: 15px;\n63 |     line-height: 1.6;\n64 |     color: var(--text-primary);\n65 |     background: var(--bg-page);\n66 |     min-height: 100vh;\n67 | }\n68 | \n69 | a { color: var(--accent); text-decoration: none; }\n70 | a:hover { text-decoration: underline; }\n71 | \n72 | ul { list-style: none; }\n73 | button { cursor: pointer; font-family: inherit; }\n74 | \n75 | /* ── Scrollbar ── */\n76 | ::-webkit-scrollbar { width: 6px; height: 6px; }\n77 | ::-webkit-scrollbar-track { background: var(--gray-10); }\n78 | ::-webkit-scrollbar-thumb { background: var(--gray-30); border-radius: var(--radius-full); }\n79 | ::-webkit-scrollbar-thumb:hover { background: var(--gray-60); }\n80 | \n81 | /* ═══════════════════════════════════════════════\n82 |    HEADER\n83 |    ═══════════════════════════════════════════════ */\n84 | .header {\n85 |     background: var(--grad-brand);\n86 |     color: var(--white);\n87 |     position: sticky;\n88 |     top: 0;\n89 |     z-index: 200;\n90 |     box-shadow: var(--shadow-md);\n91 | }\n92 | .header-inner {\n93 |     max-width: 1440px;\n94 |     margin: 0 auto;\n95 |     padding: 0 24px;\n96 |     height: 64px;\n97 |     display: flex;\n98 |     align-items: center;\n99 |     gap: 24px;\n100 | }\n101 | \n102 | /* Logo */\n103 | .logo { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }\n104 | .logo-icon {\n105 |     width: 40px; height: 40px;\n106 |     background: rgba(255,255,255,.18);\n107 |     border-radius: var(--radius);\n108 |     display: flex; align-items: center; justify-content: center;\n109 |     font-size: 1.3rem;\n110 | }\n111 | .logo-title { display: block; font-size: 1.15rem; font-weight: 700; line-height: 1.2; }\n112 | .logo-sub   { display: block; font-size: 0.72rem; opacity: .75; font-weight: 400; letter-spacing: .02em; }\n113 | \n114 | /* Nav */\n115 | .nav { display: flex; gap: 6px; margin: 0 auto; }\n116 | .nav-btn {\n117 |     display: flex; align-items: center; gap: 7px;\n118 |     background: rgba(255,255,255,.1);\n119 |     color: rgba(255,255,255,.9);\n120 |     border: 1.5px solid transparent;\n121 |     padding: 8px 16px;\n122 |     border-radius: var(--radius);\n123 |     font-size: .9rem;\n124 |     font-weight: 500;\n125 |     transition: background .2s, border-color .2s, transform .15s;\n126 | }\n127 | .nav-btn:hover { background: rgba(255,255,255,.2); transform: translateY(-1px); }\n128 | .nav-btn.active {\n129 |     background: var(--white);\n130 |     color: var(--accent);\n131 |     border-color: var(--white);\n132 |     font-weight: 600;\n133 | }\n134 | \n135 | /* Status pill */\n136 | .header-status { display: flex; align-items: center; gap: 8px; flex-shrink: 0; font-size: .85rem; opacity: .9; }\n137 | .pulse-dot {\n138 |     width: 9px; height: 9px;\n139 |     background: #42be65;\n140 |     border-radius: var(--radius-full);\n141 |     box-shadow: 0 0 0 2px rgba(66,190,101,.35);\n142 |     animation: pulse 2.2s ease-in-out infinite;\n143 | }\n144 | @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }\n145 | \n146 | /* ═══════════════════════════════════════════════\n147 |    MAIN / SECTION\n148 |    ═══════════════════════════════════════════════ */\n149 | .main-content { min-height: calc(100vh - 108px); }\n150 | \n151 | .section { display: none; animation: fadeUp .25s ease; }\n152 | .section.active { display: block; }\n153 | \n154 | @keyframes fadeUp {\n155 |     from { opacity: 0; transform: translateY(12px); }\n156 |     to   { opacity: 1; transform: translateY(0); }\n157 | }\n158 | \n159 | /* Page containers (wellness / symptoms / about) */\n160 | .page-container { max-width: 1440px; margin: 0 auto; padding: 28px 24px; }\n161 | .page-header { margin-bottom: 28px; }\n162 | .page-header h2 {\n163 |     font-size: 1.6rem; font-weight: 700;\n164 |     color: var(--accent); display: flex; align-items: center; gap: 10px;\n165 |     margin-bottom: 6px;\n166 | }\n167 | .page-header p { color: var(--text-muted); font-size: .95rem; }\n168 | \n169 | /* ═══════════════════════════════════════════════\n170 |    CHAT LAYOUT\n171 |    ═══════════════════════════════════════════════ */\n172 | .chat-layout {\n173 |     max-width: 1440px;\n174 |     margin: 0 auto;\n175 |     padding: 20px 24px;\n176 |     display: grid;\n177 |     grid-template-columns: 280px 1fr;\n178 |     gap: 20px;\n179 |     height: calc(100vh - 108px);\n180 | }\n181 | \n182 | /* ── Sidebar ── */\n183 | .sidebar {\n184 |     display: flex;\n185 |     flex-direction: column;\n186 |     gap: 16px;\n187 |     overflow-y: auto;\n188 |     padding-right: 4px;\n189 | }\n190 | .sidebar-block {\n191 |     background: var(--bg-surface);\n192 |     border-radius: var(--radius-lg);\n193 |     padding: 18px;\n194 |     box-shadow: var(--shadow-sm);\n195 |     border: 1px solid var(--border);\n196 | }\n197 | .sidebar-heading {\n198 |     font-size: .82rem;\n199 |     font-weight: 600;\n200 |     color: var(--text-muted);\n201 |     text-transform: uppercase;\n202 |     letter-spacing: .06em;\n203 |     margin-bottom: 12px;\n204 |     display: flex; align-items: center; gap: 7px;\n205 | }\n206 | .sidebar-heading i { color: var(--accent); }\n207 | \n208 | /* Quick buttons */\n209 | .quick-actions { display: flex; flex-direction: column; gap: 7px; }\n210 | .quick-btn {\n211 |     display: flex; align-items: center; gap: 10px;\n212 |     background: var(--gray-10);\n213 |     border: 1.5px solid var(--border);\n214 |     border-radius: var(--radius);\n215 |     padding: 10px 12px;\n216 |     text-align: left;\n217 |     font-size: .88rem;\n218 |     font-weight: 500;\n219 |     color: var(--text-primary);\n220 |     transition: all .2s;\n221 | }\n222 | .quick-btn i { color: var(--accent); font-size: 1rem; min-width: 18px; }\n223 | .quick-btn:hover {\n224 |     background: var(--accent);\n225 |     border-color: var(--accent);\n226 |     color: var(--white);\n227 |     transform: translateX(4px);\n228 |     box-shadow: var(--shadow-sm);\n229 | }\n230 | .quick-btn:hover i { color: var(--white); }\n231 | \n232 | /* Health reminders */\n233 | .vitals-block {}\n234 | .reminder-list { display: flex; flex-direction: column; gap: 9px; }\n235 | .reminder-list li {\n236 |     display: flex; align-items: center; gap: 9px;\n237 |     font-size: .86rem; color: var(--text-muted);\n238 | }\n239 | .reminder-list li i { color: var(--green-50); width: 16px; }\n240 | \n241 | /* Disclaimer */\n242 | .disclaimer {\n243 |     background: #fffbe6;\n244 |     border: 1.5px solid var(--yellow-30);\n245 |     border-radius: var(--radius);\n246 |     padding: 14px;\n247 |     display: flex; gap: 10px;\n248 |     font-size: .82rem;\n249 |     color: var(--gray-80);\n250 |     line-height: 1.55;\n251 | }\n252 | .disclaimer i { color: #c08a00; margin-top: 2px; flex-shrink: 0; }\n253 | .disclaimer strong { color: var(--gray-100); }\n254 | \n255 | /* ── Chat Panel ── */\n256 | .chat-panel {\n257 |     background: var(--bg-surface);\n258 |     border-radius: var(--radius-lg);\n259 |     box-shadow: var(--shadow-md);\n260 |     border: 1px solid var(--border);\n261 |     display: flex;\n262 |     flex-direction: column;\n263 |     overflow: hidden;\n264 | }\n265 | \n266 | /* Topbar */\n267 | .chat-topbar {\n268 |     padding: 14px 20px;\n269 |     border-bottom: 1px solid var(--border);\n270 |     display: flex;\n271 |     align-items: center;\n272 |     justify-content: space-between;\n273 |     background: var(--white);\n274 | }\n275 | .agent-info { display: flex; align-items: center; gap: 12px; }\n276 | .agent-avatar {\n277 |     width: 38px; height: 38px;\n278 |     border-radius: var(--radius-full);\n279 |     background: var(--grad-brand);\n280 |     color: var(--white);\n281 |     display: flex; align-items: center; justify-content: center;\n282 |     font-size: 1.1rem;\n283 | }\n284 | .agent-name { font-weight: 600; font-size: .95rem; line-height: 1.2; }\n285 | .agent-model { font-size: .76rem; color: var(--text-muted); }\n286 | .topbar-actions { display: flex; gap: 8px; }\n287 | .icon-btn {\n288 |     width: 36px; height: 36px;\n289 |     background: var(--gray-10);\n290 |     border: 1px solid var(--border);\n291 |     border-radius: var(--radius);\n292 |     color: var(--text-muted);\n293 |     font-size: .95rem;\n294 |     display: flex; align-items: center; justify-content: center;\n295 |     transition: all .2s;\n296 | }\n297 | .icon-btn:hover { background: var(--gray-20); color: var(--text-primary); }\n298 | .icon-btn.danger:hover { background: var(--red-60); border-color: var(--red-60); color: var(--white); }\n299 | \n300 | /* Messages */\n301 | .chat-messages {\n302 |     flex: 1;\n303 |     overflow-y: auto;\n304 |     padding: 20px;\n305 |     display: flex;\n306 |     flex-direction: column;\n307 |     gap: 18px;\n308 | }\n309 | \n310 | .message { display: flex; gap: 10px; animation: slideIn .22s ease; }\n311 | @keyframes slideIn {\n312 |     from { opacity: 0; transform: translateY(8px); }\n313 |     to   { opacity: 1; transform: translateY(0); }\n314 | }\n315 | \n316 | .msg-avatar {\n317 |     width: 36px; height: 36px; border-radius: var(--radius-full);\n318 |     display: flex; align-items: center; justify-content: center;\n319 |     font-size: 1rem; flex-shrink: 0;\n320 | }\n321 | .msg-avatar.small { width: 28px; height: 28px; font-size: .85rem; }\n322 | .bot-message .msg-avatar { background: var(--grad-brand); color: var(--white); }\n323 | .user-message .msg-avatar { background: var(--grad-health); color: var(--white); }\n324 | \n325 | .msg-body { flex: 1; max-width: 72%; }\n326 | .user-message { flex-direction: row-reverse; }\n327 | .user-message .msg-body { display: flex; flex-direction: column; align-items: flex-end; }\n328 | \n329 | .msg-bubble {\n330 |     background: var(--gray-10);\n331 |     border-radius: var(--radius-lg);\n332 |     border-top-left-radius: 4px;\n333 |     padding: 14px 16px;\n334 |     font-size: .92rem;\n335 |     line-height: 1.65;\n336 |     color: var(--text-primary);\n337 | }\n338 | .user-message .msg-bubble {\n339 |     background: var(--grad-brand);\n340 |     color: var(--white);\n341 |     border-top-left-radius: var(--radius-lg);\n342 |     border-top-right-radius: 4px;\n343 | }\n344 | .msg-bubble p { margin-bottom: 8px; }\n345 | .msg-bubble p:last-child { margin-bottom: 0; }\n346 | .msg-bubble ul, .msg-bubble ol { margin: 8px 0 8px 18px; }\n347 | .msg-bubble li { margin-bottom: 4px; }\n348 | .msg-bubble strong { font-weight: 600; }\n349 | .user-message .msg-bubble ul,\n350 | .user-message .msg-bubble ol { list-style: none; margin-left: 0; }\n351 | \n352 | .msg-meta {\n353 |     font-size: .72rem;\n354 |     color: var(--text-muted);\n355 |     margin-top: 5px;\n356 |     display: block;\n357 | }\n358 | .user-message .msg-meta { text-align: right; }\n359 | \n360 | /* Typing indicator */\n361 | .typing-indicator {\n362 |     display: none;\n363 |     align-items: center;\n364 |     gap: 10px;\n365 |     padding: 8px 20px;\n366 |     background: var(--white);\n367 |     border-top: 1px solid var(--border);\n368 | }\n369 | .typing-indicator.active { display: flex; }\n370 | .typing-dots { display: flex; gap: 5px; }\n371 | .typing-dots span {\n372 |     width: 8px; height: 8px;\n373 |     background: var(--accent);\n374 |     border-radius: var(--radius-full);\n375 |     animation: bounce 1.35s ease-in-out infinite;\n376 | }\n377 | .typing-dots span:nth-child(2) { animation-delay: .18s; }\n378 | .typing-dots span:nth-child(3) { animation-delay: .36s; }\n379 | @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }\n380 | .typing-label { font-size: .8rem; color: var(--text-muted); font-style: italic; }\n381 | \n382 | /* Input area */\n383 | .chat-input-area {\n384 |     padding: 14px 20px 16px;\n385 |     border-top: 1px solid var(--border);\n386 |     background: var(--white);\n387 | }\n388 | .chat-form { display: flex; gap: 10px; align-items: flex-end; }\n389 | #userInput {\n390 |     flex: 1;\n391 |     padding: 12px 14px;\n392 |     border: 1.5px solid var(--border);\n393 |     border-radius: var(--radius);\n394 |     font-size: .93rem;\n395 |     font-family: inherit;\n396 |     resize: none;\n397 |     max-height: 120px;\n398 |     transition: border-color .2s, box-shadow .2s;\n399 |     line-height: 1.5;\n400 | }\n401 | #userInput:focus { outline: none; border-color: var(--accent); box-shadow: var(--shadow-focus); }\n402 | #sendBtn {\n403 |     width: 44px; height: 44px;\n404 |     background: var(--grad-brand);\n405 |     color: var(--white);\n406 |     border: none;\n407 |     border-radius: var(--radius);\n408 |     font-size: 1rem;\n409 |     display: flex; align-items: center; justify-content: center;\n410 |     flex-shrink: 0;\n411 |     transition: opacity .2s, transform .15s;\n412 | }\n413 | #sendBtn:hover  { opacity: .88; transform: translateY(-1px); }\n414 | #sendBtn:active { transform: translateY(0); }\n415 | #sendBtn:disabled { opacity: .4; cursor: not-allowed; }\n416 | .input-hint { font-size: .73rem; color: var(--text-muted); margin-top: 7px; }\n417 | .input-hint kbd {\n418 |     background: var(--gray-10);\n419 |     border: 1px solid var(--gray-30);\n420 |     border-radius: 4px;\n421 |     padding: 1px 5px;\n422 |     font-size: .72rem;\n423 |     font-family: monospace;\n424 | }\n425 | \n426 | /* ═══════════════════════════════════════════════\n427 |    WELLNESS GRID\n428 |    ═══════════════════════════════════════════════ */\n429 | .wellness-grid {\n430 |     display: grid;\n431 |     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n432 |     gap: 20px;\n433 | }\n434 | .wellness-card {\n435 |     background: var(--grad-card);\n436 |     border: 1px solid var(--border);\n437 |     border-radius: var(--radius-lg);\n438 |     padding: 28px 24px;\n439 |     text-align: center;\n440 |     transition: transform .2s, box-shadow .2s;\n441 |     display: flex; flex-direction: column; align-items: center; gap: 10px;\n442 | }\n443 | .wellness-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }\n444 | .wcard-icon {\n445 |     width: 70px; height: 70px;\n446 |     border-radius: var(--radius-full);\n447 |     background: color-mix(in srgb, var(--c) 14%, transparent);\n448 |     border: 2.5px solid color-mix(in srgb, var(--c) 30%, transparent);\n449 |     display: flex; align-items: center; justify-content: center;\n450 |     font-size: 1.7rem;\n451 |     color: var(--c, var(--accent));\n452 |     margin-bottom: 4px;\n453 | }\n454 | .wellness-card h3 { font-size: 1.08rem; font-weight: 600; color: var(--text-primary); }\n455 | .wellness-card p  { font-size: .88rem; color: var(--text-muted); line-height: 1.6; flex: 1; }\n456 | .wellness-action {\n457 |     background: var(--accent);\n458 |     color: var(--white);\n459 |     border: none;\n460 |     padding: 10px 20px;\n461 |     border-radius: var(--radius);\n462 |     font-size: .88rem;\n463 |     font-weight: 500;\n464 |     display: flex; align-items: center; gap: 7px;\n465 |     transition: background .2s, transform .15s;\n466 |     margin-top: 6px;\n467 | }\n468 | .wellness-action:hover { background: var(--accent-dark); transform: translateY(-1px); }\n469 | \n470 | /* ═══════════════════════════════════════════════\n471 |    SYMPTOMS TOOL\n472 |    ═══════════════════════════════════════════════ */\n473 | .symptoms-layout {\n474 |     display: grid;\n475 |     grid-template-columns: 340px 1fr;\n476 |     gap: 20px;\n477 |     align-items: start;\n478 | }\n479 | .symptoms-picker {\n480 |     background: var(--bg-surface);\n481 |     border: 1px solid var(--border);\n482 |     border-radius: var(--radius-lg);\n483 |     padding: 20px;\n484 |     box-shadow: var(--shadow-sm);\n485 |     position: sticky;\n486 |     top: 80px;\n487 | }\n488 | .symptoms-picker h4 { font-size: .95rem; font-weight: 600; margin-bottom: 12px; }\n489 | \n490 | .symptom-search-bar {\n491 |     display: flex; align-items: center; gap: 8px;\n492 |     border: 1.5px solid var(--border);\n493 |     border-radius: var(--radius);\n494 |     padding: 8px 12px;\n495 |     margin-bottom: 14px;\n496 |     transition: border-color .2s;\n497 | }\n498 | .symptom-search-bar:focus-within { border-color: var(--accent); box-shadow: var(--shadow-focus); }\n499 | .symptom-search-bar i { color: var(--text-muted); }\n500 | .symptom-search-bar input {\n501 |     border: none; outline: none; flex: 1;\n502 |     font-size: .88rem; font-family: inherit; background: transparent;\n503 | }\n504 | \n505 | .symptom-tags {\n506 |     display: flex; flex-wrap: wrap; gap: 7px;\n507 |     max-height: 220px; overflow-y: auto;\n508 |     margin-bottom: 14px;\n509 | }\n510 | .symptom-tag {\n511 |     background: var(--gray-10);\n512 |     border: 1.5px solid var(--border);\n513 |     border-radius: var(--radius-full);\n514 |     padding: 5px 13px;\n515 |     font-size: .82rem;\n516 |     font-weight: 500;\n517 |     color: var(--text-primary);\n518 |     transition: all .18s;\n519 | }\n520 | .symptom-tag:hover { border-color: var(--accent); color: var(--accent); }\n521 | .symptom-tag.selected {\n522 |     background: var(--accent);\n523 |     border-color: var(--accent);\n524 |     color: var(--white);\n525 | }\n526 | .symptom-tag.hidden { display: none; }\n527 | \n528 | .selected-symptoms { margin-bottom: 14px; }\n529 | .selected-symptoms h4 { font-size: .85rem; color: var(--text-muted); margin-bottom: 8px; }\n530 | .selected-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }\n531 | .sel-chip {\n532 |     background: color-mix(in srgb, var(--accent) 12%, transparent);\n533 |     border: 1.5px solid var(--accent);\n534 |     border-radius: var(--radius-full);\n535 |     padding: 3px 10px;\n536 |     font-size: .8rem;\n537 |     color: var(--accent);\n538 |     font-weight: 600;\n539 |     display: flex; align-items: center; gap: 5px;\n540 | }\n541 | .sel-chip button { background: none; border: none; color: var(--accent); padding: 0; font-size: .75rem; cursor: pointer; }\n542 | \n543 | .check-btn {\n544 |     width: 100%;\n545 |     background: var(--grad-brand);\n546 |     color: var(--white);\n547 |     border: none;\n548 |     padding: 12px;\n549 |     border-radius: var(--radius);\n550 |     font-size: .92rem;\n551 |     font-weight: 600;\n552 |     display: flex; align-items: center; justify-content: center; gap: 8px;\n553 |     transition: opacity .2s, transform .15s;\n554 |     margin-bottom: 8px;\n555 | }\n556 | .check-btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }\n557 | .check-btn:disabled { opacity: .4; cursor: not-allowed; }\n558 | .clear-symptoms-btn {\n559 |     width: 100%;\n560 |     background: transparent;\n561 |     color: var(--text-muted);\n562 |     border: 1px solid var(--border);\n563 |     padding: 9px;\n564 |     border-radius: var(--radius);\n565 |     font-size: .85rem;\n566 |     display: flex; align-items: center; justify-content: center; gap: 7px;\n567 |     transition: background .2s, color .2s;\n568 | }\n569 | .clear-symptoms-btn:hover { background: var(--gray-10); color: var(--text-primary); }\n570 | \n571 | /* Result panel */\n572 | .symptoms-result {\n573 |     background: var(--bg-surface);\n574 |     border: 1px solid var(--border);\n575 |     border-radius: var(--radius-lg);\n576 |     padding: 24px;\n577 |     box-shadow: var(--shadow-sm);\n578 |     min-height: 320px;\n579 |     display: flex; align-items: flex-start;\n580 | }\n581 | .result-placeholder {\n582 |     display: flex; flex-direction: column; align-items: center; justify-content: center;\n583 |     text-align: center; gap: 16px;\n584 |     width: 100%; padding: 40px 20px;\n585 |     color: var(--text-muted);\n586 | }\n587 | .result-placeholder i { font-size: 3rem; opacity: .25; }\n588 | .result-placeholder p { font-size: .95rem; max-width: 340px; line-height: 1.6; }\n589 | .symptoms-result-content { width: 100%; }\n590 | .symptoms-result-content h4 {\n591 |     font-size: 1rem; font-weight: 700; color: var(--accent);\n592 |     margin-bottom: 14px; display: flex; align-items: center; gap: 8px;\n593 | }\n594 | .symptoms-result-content p { font-size: .92rem; color: var(--text-primary); line-height: 1.7; margin-bottom: 10px; }\n595 | .symptoms-result-content ul { margin: 8px 0 12px 18px; }\n596 | .symptoms-result-content li { margin-bottom: 5px; font-size: .91rem; }\n597 | .result-loading { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 40px; width: 100%; }\n598 | .result-loading .spinner { width: 36px; height: 36px; border-width: 3px; border-color: var(--border) var(--border) var(--border) var(--accent); }\n599 | .result-loading p { color: var(--text-muted); font-size: .9rem; }\n600 | .emergency-banner {\n601 |     background: #fff1f1;\n602 |     border: 2px solid var(--red-60);\n603 |     border-radius: var(--radius);\n604 |     padding: 12px 16px;\n605 |     color: var(--red-60);\n606 |     font-weight: 600;\n607 |     font-size: .88rem;\n608 |     margin-top: 14px;\n609 |     display: flex; align-items: center; gap: 8px;\n610 | }\n611 | \n612 | /* ═══════════════════════════════════════════════\n613 |    ABOUT\n614 |    ═══════════════════════════════════════════════ */\n615 | .about-grid {\n616 |     display: grid;\n617 |     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));\n618 |     gap: 20px;\n619 | }\n620 | .about-card {\n621 |     background: var(--bg-surface);\n622 |     border: 1px solid var(--border);\n623 |     border-radius: var(--radius-lg);\n624 |     padding: 28px;\n625 |     box-shadow: var(--shadow-sm);\n626 | }\n627 | .about-card h3 {\n628 |     font-size: 1.05rem; font-weight: 700;\n629 |     color: var(--accent); margin-bottom: 14px;\n630 |     display: flex; align-items: center; gap: 9px;\n631 | }\n632 | .about-card p  { font-size: .9rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 10px; }\n633 | .about-card p:last-child { margin-bottom: 0; }\n634 | .about-card ul { margin-left: 18px; }\n635 | .about-card li { font-size: .9rem; color: var(--text-muted); margin-bottom: 7px; line-height: 1.5; }\n636 | .about-card li::marker { color: var(--accent); }\n637 | \n638 | .warning-card { background: #fff8f8; border-color: #ffc6c6; }\n639 | .warning-card h3 { color: var(--red-60); }\n640 | .warning-card p  { color: var(--gray-80); }\n641 | \n642 | .tech-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }\n643 | .tech-pill {\n644 |     background: color-mix(in srgb, var(--accent) 10%, transparent);\n645 |     border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);\n646 |     color: var(--accent-dark);\n647 |     border-radius: var(--radius-full);\n648 |     padding: 4px 12px;\n649 |     font-size: .8rem;\n650 |     font-weight: 600;\n651 | }\n652 | .tech-details p { font-size: .85rem; color: var(--text-muted); margin-bottom: 5px; }\n653 | .tech-details code {\n654 |     background: var(--gray-10);\n655 |     border: 1px solid var(--border);\n656 |     border-radius: 4px;\n657 |     padding: 1px 6px;\n658 |     font-size: .82rem;\n659 |     color: var(--gray-80);\n660 | }\n661 | .objectives-card ul { list-style: disc; }\n662 | \n663 | /* ═══════════════════════════════════════════════\n664 |    FOOTER\n665 |    ═══════════════════════════════════════════════ */\n666 | .footer {\n667 |     background: var(--gray-100);\n668 |     color: rgba(255,255,255,.7);\n669 |     font-size: .82rem;\n670 |     margin-top: 40px;\n671 | }\n672 | .footer-inner {\n673 |     max-width: 1440px;\n674 |     margin: 0 auto;\n675 |     padding: 14px 24px;\n676 |     display: flex;\n677 |     align-items: center;\n678 |     justify-content: space-between;\n679 |     flex-wrap: wrap;\n680 |     gap: 10px;\n681 | }\n682 | .footer-left { display: flex; align-items: center; gap: 8px; }\n683 | .footer-sep { opacity: .4; }\n684 | .footer-left i { color: var(--red-60); }\n685 | .footer-right { color: rgba(255,255,255,.55); }\n686 | \n687 | /* ═══════════════════════════════════════════════\n688 |    LOADING OVERLAY\n689 |    ═══════════════════════════════════════════════ */\n690 | .loading-overlay {\n691 |     position: fixed; inset: 0;\n692 |     background: var(--bg-overlay);\n693 |     display: none; align-items: center; justify-content: center;\n694 |     z-index: 999;\n695 | }\n696 | .loading-overlay.active { display: flex; }\n697 | .loader-box {\n698 |     background: var(--white);\n699 |     border-radius: var(--radius-lg);\n700 |     padding: 36px 48px;\n701 |     text-align: center;\n702 |     box-shadow: var(--shadow-lg);\n703 | }\n704 | .spinner {\n705 |     width: 44px; height: 44px;\n706 |     border: 4px solid var(--border);\n707 |     border-top-color: var(--accent);\n708 |     border-radius: var(--radius-full);\n709 |     animation: spin 0.85s linear infinite;\n710 |     margin: 0 auto 16px;\n711 | }\n712 | @keyframes spin { to { transform: rotate(360deg); } }\n713 | .loader-box p { font-size: .95rem; color: var(--text-muted); }\n714 | \n715 | /* ═══════════════════════════════════════════════\n716 |    RESPONSIVE\n717 |    ═══════════════════════════════════════════════ */\n718 | @media (max-width: 1100px) {\n719 |     .chat-layout { grid-template-columns: 240px 1fr; }\n720 | }\n721 | \n722 | @media (max-width: 900px) {\n723 |     .chat-layout {\n724 |         grid-template-columns: 1fr;\n725 |         height: auto;\n726 |     }\n727 |     .sidebar { flex-direction: row; flex-wrap: wrap; }\n728 |     .sidebar-block { flex: 1 1 260px; }\n729 |     .symptoms-layout { grid-template-columns: 1fr; }\n730 |     .symptoms-picker { position: static; }\n731 | }\n732 | \n733 | @media (max-width: 720px) {\n734 |     .header-inner { height: auto; padding: 10px 16px; flex-wrap: wrap; gap: 10px; }\n735 |     .header-status { display: none; }\n736 |     .nav { margin: 0; flex-wrap: wrap; justify-content: center; }\n737 |     .nav-btn span { display: none; }\n738 |     .nav-btn { padding: 8px 12px; }\n739 |     .chat-layout { padding: 12px 14px; }\n740 |     .page-container { padding: 16px 14px; }\n741 |     .about-grid { grid-template-columns: 1fr; }\n742 |     .wellness-grid { grid-template-columns: 1fr 1fr; }\n743 | }\n744 | \n745 | @media (max-width: 480px) {\n746 |     .wellness-grid { grid-template-columns: 1fr; }\n747 |     .logo-sub { display: none; }\n748 | }\n749 | ",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_wYi0TekuuaIFOtNBlgVugM",
+                "name": "read_file",
+                "arguments": {
+                  "path": "styles.css"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Read File {path}",
+                "error": "Failed to read file {path}",
+                "running": "Reading file {path}",
+                "success": "Read file {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "fileMtimes": {
+                "file:///c%3A/Users/kavya/OneDrive/Desktop/Healthcare%20Assistance/styles.css": 1782489133081
+              },
+              "durationMs": 700,
+              "timestamp": 1782537800468
+            },
+            "id": "e8328cd2b17ac1800e98dd3b6a5851d5"
+          },
+          "createdAt": 1782537802929
+        },
+        {
+          "id": "5061c9d30438fc15ce55fe9f5db456dc",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Contents of file index.html:\n\n1 | <!DOCTYPE html>\n2 | <html lang=\"en\">\n3 | <head>\n4 |     <meta charset=\"UTF-8\">\n5 |     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n6 |     <title>AI Healthcare Assistant – Powered by IBM Bob</title>\n7 |     <link rel=\"stylesheet\" href=\"styles.css\">\n8 |     <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">\n9 |     <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n10 |     <link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">\n11 | </head>\n12 | <body>\n13 | \n14 |     <!-- Header -->\n15 |     <header class=\"header\">\n16 |         <div class=\"header-inner\">\n17 |             <div class=\"logo\">\n18 |                 <div class=\"logo-icon\">\n19 |                     <i class=\"fas fa-heart-pulse\"></i>\n20 |                 </div>\n21 |                 <div class=\"logo-text\">\n22 |                     <span class=\"logo-title\">HealthAI</span>\n23 |                     <span class=\"logo-sub\">Powered by IBM Bob · Granite 3</span>\n24 |                 </div>\n25 |             </div>\n26 |             <nav class=\"nav\">\n27 |                 <button class=\"nav-btn active\" data-section=\"chat\">\n28 |                     <i class=\"fas fa-comments\"></i><span>Chat</span>\n29 |                 </button>\n30 |                 <button class=\"nav-btn\" data-section=\"wellness\">\n31 |                     <i class=\"fas fa-spa\"></i><span>Wellness</span>\n32 |                 </button>\n33 |                 <button class=\"nav-btn\" data-section=\"symptoms\">\n34 |                     <i class=\"fas fa-stethoscope\"></i><span>Symptoms</span>\n35 |                 </button>\n36 |                 <button class=\"nav-btn\" data-section=\"about\">\n37 |                     <i class=\"fas fa-circle-info\"></i><span>About</span>\n38 |                 </button>\n39 |             </nav>\n40 |             <div class=\"header-status\">\n41 |                 <span class=\"pulse-dot\"></span>\n42 |                 <span class=\"status-text\">AI Online</span>\n43 |             </div>\n44 |         </div>\n45 |     </header>\n46 | \n47 |     <!-- Main Content -->\n48 |     <main class=\"main-content\">\n49 | \n50 |         <!-- ── CHAT SECTION ── -->\n51 |         <section id=\"chat-section\" class=\"section active\">\n52 |             <div class=\"chat-layout\">\n53 | \n54 |                 <!-- Sidebar -->\n55 |                 <aside class=\"sidebar\">\n56 |                     <div class=\"sidebar-block\">\n57 |                         <h4 class=\"sidebar-heading\"><i class=\"fas fa-bolt\"></i> Quick Topics</h4>\n58 |                         <div class=\"quick-actions\">\n59 |                             <button class=\"quick-btn\" data-query=\"What are the symptoms of common cold and how do I treat it?\">\n60 |                                 <i class=\"fas fa-thermometer-half\"></i><span>Cold &amp; Flu</span>\n61 |                             </button>\n62 |                             <button class=\"quick-btn\" data-query=\"Give me 5 evidence-based tips for better sleep quality.\">\n63 |                                 <i class=\"fas fa-moon\"></i><span>Sleep Tips</span>\n64 |                             </button>\n65 |                             <button class=\"quick-btn\" data-query=\"What does a well-balanced healthy diet look like?\">\n66 |                                 <i class=\"fas fa-apple-whole\"></i><span>Healthy Diet</span>\n67 |                             </button>\n68 |                             <button class=\"quick-btn\" data-query=\"How can I manage stress and anxiety effectively?\">\n69 |                                 <i class=\"fas fa-brain\"></i><span>Stress Relief</span>\n70 |                             </button>\n71 |                             <button class=\"quick-btn\" data-query=\"Suggest a beginner-friendly exercise routine for the week.\">\n72 |                                 <i class=\"fas fa-person-running\"></i><span>Exercise Plan</span>\n73 |                             </button>\n74 |                             <button class=\"quick-btn\" data-query=\"What natural ways can I use to boost my immune system?\">\n75 |                                 <i class=\"fas fa-shield-virus\"></i><span>Immunity Boost</span>\n76 |                             </button>\n77 |                             <button class=\"quick-btn\" data-query=\"What are common signs of dehydration and how to stay hydrated?\">\n78 |                                 <i class=\"fas fa-droplet\"></i><span>Hydration</span>\n79 |                             </button>\n80 |                             <button class=\"quick-btn\" data-query=\"Give me tips for maintaining a healthy heart and good cardiovascular health.\">\n81 |                                 <i class=\"fas fa-heart-pulse\"></i><span>Heart Health</span>\n82 |                             </button>\n83 |                         </div>\n84 |                     </div>\n85 | \n86 |                     <div class=\"sidebar-block vitals-block\">\n87 |                         <h4 class=\"sidebar-heading\"><i class=\"fas fa-chart-line\"></i> Health Reminders</h4>\n88 |                         <ul class=\"reminder-list\">\n89 |                             <li><i class=\"fas fa-glass-water\"></i> Drink 8 glasses of water daily</li>\n90 |                             <li><i class=\"fas fa-walking\"></i> 10,000 steps a day goal</li>\n91 |                             <li><i class=\"fas fa-bed\"></i> Aim for 7–9 hours of sleep</li>\n92 |                             <li><i class=\"fas fa-apple-whole\"></i> 5 servings of fruits &amp; veggies</li>\n93 |                             <li><i class=\"fas fa-calendar-check\"></i> Schedule annual check-up</li>\n94 |                         </ul>\n95 |                     </div>\n96 | \n97 |                     <div class=\"disclaimer\">\n98 |                         <i class=\"fas fa-triangle-exclamation\"></i>\n99 |                         <p><strong>Disclaimer:</strong> For general information only. Always consult a qualified healthcare professional for medical advice.</p>\n100 |                     </div>\n101 |                 </aside>\n102 | \n103 |                 <!-- Chat Panel -->\n104 |                 <div class=\"chat-panel\">\n105 |                     <div class=\"chat-topbar\">\n106 |                         <div class=\"agent-info\">\n107 |                             <div class=\"agent-avatar\"><i class=\"fas fa-robot\"></i></div>\n108 |                             <div>\n109 |                                 <p class=\"agent-name\">HealthAI Assistant</p>\n110 |                                 <p class=\"agent-model\">IBM Granite 3 · Agentic Mode</p>\n111 |                             </div>\n112 |                         </div>\n113 |                         <div class=\"topbar-actions\">\n114 |                             <button class=\"icon-btn\" id=\"exportChat\" title=\"Export conversation\">\n115 |                                 <i class=\"fas fa-download\"></i>\n116 |                             </button>\n117 |                             <button class=\"icon-btn danger\" id=\"clearChat\" title=\"Clear chat\">\n118 |                                 <i class=\"fas fa-trash\"></i>\n119 |                             </button>\n120 |                         </div>\n121 |                     </div>\n122 | \n123 |                     <div class=\"chat-messages\" id=\"chatMessages\">\n124 |                         <!-- Welcome message -->\n125 |                         <div class=\"message bot-message\">\n126 |                             <div class=\"msg-avatar\"><i class=\"fas fa-robot\"></i></div>\n127 |                             <div class=\"msg-body\">\n128 |                                 <div class=\"msg-bubble\">\n129 |                                     <p>Hello! I'm your <strong>AI Healthcare Assistant</strong>, powered by <strong>IBM Bob (Granite 3)</strong>. 👋</p>\n130 |                                     <p>I can help you with:</p>\n131 |                                     <ul>\n132 |                                         <li>General health information &amp; guidance</li>\n133 |                                         <li>Personalised wellness &amp; nutrition advice</li>\n134 |                                         <li>Preventive healthcare tips</li>\n135 |                                         <li>Symptom awareness &amp; healthy lifestyle practices</li>\n136 |                                     </ul>\n137 |                                     <p>How can I support your health journey today?</p>\n138 |                                 </div>\n139 |                                 <span class=\"msg-meta\">HealthAI · Just now</span>\n140 |                             </div>\n141 |                         </div>\n142 |                     </div>\n143 | \n144 |                     <!-- Typing indicator -->\n145 |                     <div class=\"typing-indicator\" id=\"typingIndicator\">\n146 |                         <div class=\"msg-avatar small\"><i class=\"fas fa-robot\"></i></div>\n147 |                         <div class=\"typing-dots\">\n148 |                             <span></span><span></span><span></span>\n149 |                         </div>\n150 |                         <span class=\"typing-label\">HealthAI is thinking…</span>\n151 |                     </div>\n152 | \n153 |                     <div class=\"chat-input-area\">\n154 |                         <form class=\"chat-form\" id=\"chatForm\">\n155 |                             <textarea\n156 |                                 id=\"userInput\"\n157 |                                 placeholder=\"Ask me anything about health &amp; wellness…\"\n158 |                                 rows=\"1\"\n159 |                                 autocomplete=\"off\"\n160 |                                 required\n161 |                             ></textarea>\n162 |                             <button type=\"submit\" id=\"sendBtn\" title=\"Send message\">\n163 |                                 <i class=\"fas fa-paper-plane\"></i>\n164 |                             </button>\n165 |                         </form>\n166 |                         <p class=\"input-hint\">Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line</p>\n167 |                     </div>\n168 |                 </div>\n169 |             </div>\n170 |         </section>\n171 | \n172 |         <!-- ── WELLNESS SECTION ── -->\n173 |         <section id=\"wellness-section\" class=\"section\">\n174 |             <div class=\"page-container\">\n175 |                 <div class=\"page-header\">\n176 |                     <h2><i class=\"fas fa-spa\"></i> Wellness Dashboard</h2>\n177 |                     <p>Explore personalised health and wellness topics. Click any card to get AI guidance.</p>\n178 |                 </div>\n179 |                 <div class=\"wellness-grid\">\n180 |                     <div class=\"wellness-card\" data-topic=\"heart-health\">\n181 |                         <div class=\"wcard-icon\" style=\"--c:#da1e28\"><i class=\"fas fa-heart-pulse\"></i></div>\n182 |                         <h3>Heart Health</h3>\n183 |                         <p>Cardiovascular wellness tips, blood pressure management, and heart-healthy habits.</p>\n184 |                         <button class=\"wellness-action\" data-topic=\"heart-health\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n185 |                     </div>\n186 |                     <div class=\"wellness-card\" data-topic=\"nutrition\">\n187 |                         <div class=\"wcard-icon\" style=\"--c:#24a148\"><i class=\"fas fa-utensils\"></i></div>\n188 |                         <h3>Nutrition</h3>\n189 |                         <p>Personalised nutrition advice, balanced diet plans, and healthy eating strategies.</p>\n190 |                         <button class=\"wellness-action\" data-topic=\"nutrition\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n191 |                     </div>\n192 |                     <div class=\"wellness-card\" data-topic=\"fitness\">\n193 |                         <div class=\"wcard-icon\" style=\"--c:#0f62fe\"><i class=\"fas fa-dumbbell\"></i></div>\n194 |                         <h3>Fitness</h3>\n195 |                         <p>Exercise routines tailored to your fitness level, from beginner to advanced.</p>\n196 |                         <button class=\"wellness-action\" data-topic=\"fitness\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n197 |                     </div>\n198 |                     <div class=\"wellness-card\" data-topic=\"mental-health\">\n199 |                         <div class=\"wcard-icon\" style=\"--c:#7c3ef4\"><i class=\"fas fa-brain\"></i></div>\n200 |                         <h3>Mental Health</h3>\n201 |                         <p>Stress management, mindfulness practices, and emotional well-being techniques.</p>\n202 |                         <button class=\"wellness-action\" data-topic=\"mental-health\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n203 |                     </div>\n204 |                     <div class=\"wellness-card\" data-topic=\"sleep\">\n205 |                         <div class=\"wcard-icon\" style=\"--c:#0043ce\"><i class=\"fas fa-moon\"></i></div>\n206 |                         <h3>Sleep Quality</h3>\n207 |                         <p>Evidence-based strategies to improve sleep hygiene and get restorative rest.</p>\n208 |                         <button class=\"wellness-action\" data-topic=\"sleep\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n209 |                     </div>\n210 |                     <div class=\"wellness-card\" data-topic=\"preventive-care\">\n211 |                         <div class=\"wcard-icon\" style=\"--c:#f1c21b\"><i class=\"fas fa-shield-halved\"></i></div>\n212 |                         <h3>Preventive Care</h3>\n213 |                         <p>Screening guidelines, vaccinations, and proactive measures to stay healthy.</p>\n214 |                         <button class=\"wellness-action\" data-topic=\"preventive-care\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n215 |                     </div>\n216 |                     <div class=\"wellness-card\" data-topic=\"diabetes\">\n217 |                         <div class=\"wcard-icon\" style=\"--c:#ff832b\"><i class=\"fas fa-syringe\"></i></div>\n218 |                         <h3>Diabetes Awareness</h3>\n219 |                         <p>Blood sugar management, risk factors, lifestyle changes, and monitoring tips.</p>\n220 |                         <button class=\"wellness-action\" data-topic=\"diabetes\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n221 |                     </div>\n222 |                     <div class=\"wellness-card\" data-topic=\"hydration\">\n223 |                         <div class=\"wcard-icon\" style=\"--c:#0072c3\"><i class=\"fas fa-droplet\"></i></div>\n224 |                         <h3>Hydration</h3>\n225 |                         <p>Why hydration matters and how to maintain optimal fluid intake daily.</p>\n226 |                         <button class=\"wellness-action\" data-topic=\"hydration\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n227 |                     </div>\n228 |                     <div class=\"wellness-card\" data-topic=\"womens-health\">\n229 |                         <div class=\"wcard-icon\" style=\"--c:#ee538b\"><i class=\"fas fa-venus\"></i></div>\n230 |                         <h3>Women's Health</h3>\n231 |                         <p>Hormonal health, reproductive wellness, bone density, and lifecycle guidance.</p>\n232 |                         <button class=\"wellness-action\" data-topic=\"womens-health\">Ask AI <i class=\"fas fa-arrow-right\"></i></button>\n233 |                     </div>\n234 |                 </div>\n235 |             </div>\n236 |         </section>\n237 | \n238 |         <!-- ── SYMPTOMS CHECKER SECTION ── -->\n239 |         <section id=\"symptoms-section\" class=\"section\">\n240 |             <div class=\"page-container\">\n241 |                 <div class=\"page-header\">\n242 |                     <h2><i class=\"fas fa-stethoscope\"></i> Symptom Awareness Tool</h2>\n243 |                     <p>Select symptoms to get general health information. <strong>This is not a diagnosis tool.</strong></p>\n244 |                 </div>\n245 | \n246 |                 <div class=\"symptoms-layout\">\n247 |                     <div class=\"symptoms-picker\">\n248 |                         <h4>Select Symptoms</h4>\n249 |                         <div class=\"symptom-search-bar\">\n250 |                             <i class=\"fas fa-magnifying-glass\"></i>\n251 |                             <input type=\"text\" id=\"symptomSearch\" placeholder=\"Search symptoms…\">\n252 |                         </div>\n253 |                         <div class=\"symptom-tags\" id=\"symptomTags\">\n254 |                             <button class=\"symptom-tag\" data-symptom=\"Headache\">Headache</button>\n255 |                             <button class=\"symptom-tag\" data-symptom=\"Fever\">Fever</button>\n256 |                             <button class=\"symptom-tag\" data-symptom=\"Cough\">Cough</button>\n257 |                             <button class=\"symptom-tag\" data-symptom=\"Fatigue\">Fatigue</button>\n258 |                             <button class=\"symptom-tag\" data-symptom=\"Sore throat\">Sore throat</button>\n259 |                             <button class=\"symptom-tag\" data-symptom=\"Runny nose\">Runny nose</button>\n260 |                             <button class=\"symptom-tag\" data-symptom=\"Nausea\">Nausea</button>\n261 |                             <button class=\"symptom-tag\" data-symptom=\"Vomiting\">Vomiting</button>\n262 |                             <button class=\"symptom-tag\" data-symptom=\"Diarrhoea\">Diarrhoea</button>\n263 |                             <button class=\"symptom-tag\" data-symptom=\"Chest pain\">Chest pain</button>\n264 |                             <button class=\"symptom-tag\" data-symptom=\"Shortness of breath\">Shortness of breath</button>\n265 |                             <button class=\"symptom-tag\" data-symptom=\"Dizziness\">Dizziness</button>\n266 |                             <button class=\"symptom-tag\" data-symptom=\"Rash\">Rash</button>\n267 |                             <button class=\"symptom-tag\" data-symptom=\"Joint pain\">Joint pain</button>\n268 |                             <button class=\"symptom-tag\" data-symptom=\"Back pain\">Back pain</button>\n269 |                             <button class=\"symptom-tag\" data-symptom=\"Abdominal pain\">Abdominal pain</button>\n270 |                             <button class=\"symptom-tag\" data-symptom=\"Loss of appetite\">Loss of appetite</button>\n271 |                             <button class=\"symptom-tag\" data-symptom=\"Muscle aches\">Muscle aches</button>\n272 |                             <button class=\"symptom-tag\" data-symptom=\"Swollen lymph nodes\">Swollen lymph nodes</button>\n273 |                             <button class=\"symptom-tag\" data-symptom=\"Night sweats\">Night sweats</button>\n274 |                             <button class=\"symptom-tag\" data-symptom=\"Blurred vision\">Blurred vision</button>\n275 |                             <button class=\"symptom-tag\" data-symptom=\"Frequent urination\">Frequent urination</button>\n276 |                         </div>\n277 |                         <div class=\"selected-symptoms\" id=\"selectedSymptoms\">\n278 |                             <h4>Selected: <span id=\"selectedCount\">0</span></h4>\n279 |                             <div class=\"selected-list\" id=\"selectedList\"></div>\n280 |                         </div>\n281 |                         <button class=\"check-btn\" id=\"checkSymptomsBtn\" disabled>\n282 |                             <i class=\"fas fa-stethoscope\"></i> Get AI Health Info\n283 |                         </button>\n284 |                         <button class=\"clear-symptoms-btn\" id=\"clearSymptomsBtn\">\n285 |                             <i class=\"fas fa-xmark\"></i> Clear All\n286 |                         </button>\n287 |                     </div>\n288 | \n289 |                     <div class=\"symptoms-result\" id=\"symptomsResult\">\n290 |                         <div class=\"result-placeholder\">\n291 |                             <i class=\"fas fa-stethoscope\"></i>\n292 |                             <p>Select one or more symptoms and click <strong>\"Get AI Health Info\"</strong> to receive general health information from the AI.</p>\n293 |                         </div>\n294 |                     </div>\n295 |                 </div>\n296 |             </div>\n297 |         </section>\n298 | \n299 |         <!-- ── ABOUT SECTION ── -->\n300 |         <section id=\"about-section\" class=\"section\">\n301 |             <div class=\"page-container\">\n302 |                 <div class=\"page-header\">\n303 |                     <h2><i class=\"fas fa-circle-info\"></i> About HealthAI</h2>\n304 |                     <p>Learn about the technology, capabilities, and important disclaimers.</p>\n305 |                 </div>\n306 | \n307 |                 <div class=\"about-grid\">\n308 |                     <div class=\"about-card\">\n309 |                         <h3><i class=\"fas fa-microchip\"></i> Powered by IBM Bob</h3>\n310 |                         <p>This assistant leverages <strong>IBM Bob</strong>'s Agentic AI framework with the <strong>IBM Granite 3 (granite-3-8b-instruct)</strong> language model hosted on IBM WatsonX, delivering intelligent, context-aware healthcare guidance through natural language conversations.</p>\n311 |                     </div>\n312 | \n313 |                     <div class=\"about-card\">\n314 |                         <h3><i class=\"fas fa-bullseye\"></i> Our Mission</h3>\n315 |                         <p>To provide 24/7 accessible, reliable healthcare information and wellness support — helping users make informed health decisions, promoting preventive care, and encouraging professional consultation when necessary.</p>\n316 |                     </div>\n317 | \n318 |                     <div class=\"about-card\">\n319 |                         <h3><i class=\"fas fa-list-check\"></i> Key Capabilities</h3>\n320 |                         <ul>\n321 |                             <li>Natural language healthcare conversations</li>\n322 |                             <li>Personalised wellness &amp; nutrition guidance</li>\n323 |                             <li>Symptom awareness information</li>\n324 |                             <li>Preventive care &amp; healthy lifestyle tips</li>\n325 |                             <li>24/7 availability with conversation memory</li>\n326 |                             <li>Context-aware, evidence-based responses</li>\n327 |                             <li>Agentic AI reasoning framework</li>\n328 |                         </ul>\n329 |                     </div>\n330 | \n331 |                     <div class=\"about-card warning-card\">\n332 |                         <h3><i class=\"fas fa-triangle-exclamation\"></i> Important Disclaimer</h3>\n333 |                         <p><strong>This AI assistant is NOT a substitute for professional medical advice, diagnosis, or treatment.</strong></p>\n334 |                         <p>Always seek the advice of your physician or qualified health provider with any questions regarding a medical condition. Never disregard professional medical advice based on information from this tool.</p>\n335 |                         <p>🚨 <strong>In an emergency, call your local emergency services immediately (e.g. 911, 999, 112).</strong></p>\n336 |                     </div>\n337 | \n338 |                     <div class=\"about-card tech-card\">\n339 |                         <h3><i class=\"fas fa-gears\"></i> Technology Stack</h3>\n340 |                         <div class=\"tech-pills\">\n341 |                             <span class=\"tech-pill\">IBM Bob</span>\n342 |                             <span class=\"tech-pill\">IBM Granite 3</span>\n343 |                             <span class=\"tech-pill\">WatsonX AI</span>\n344 |                             <span class=\"tech-pill\">Agentic AI</span>\n345 |                             <span class=\"tech-pill\">NLP</span>\n346 |                             <span class=\"tech-pill\">HTML5 / CSS3</span>\n347 |                             <span class=\"tech-pill\">Vanilla JS</span>\n348 |                             <span class=\"tech-pill\">REST API</span>\n349 |                         </div>\n350 |                         <div class=\"tech-details\">\n351 |                             <p><strong>Project ID:</strong> <code>a0a5cc1f-6385-4952-be11-f9c19c29b36e</code></p>\n352 |                             <p><strong>Model:</strong> <code>ibm/granite-3-8b-instruct</code></p>\n353 |                             <p><strong>Endpoint:</strong> <code>us-south.ml.cloud.ibm.com</code></p>\n354 |                         </div>\n355 |                     </div>\n356 | \n357 |                     <div class=\"about-card objectives-card\">\n358 |                         <h3><i class=\"fas fa-flag\"></i> Project Objectives</h3>\n359 |                         <ul>\n360 |                             <li>Provide 24×7 AI-powered healthcare assistance</li>\n361 |                             <li>Answer health-related queries using natural language</li>\n362 |                             <li>Offer personalised wellness and nutrition recommendations</li>\n363 |                             <li>Promote preventive healthcare and healthy lifestyle practices</li>\n364 |                             <li>Encourage users to seek professional medical advice when required</li>\n365 |                             <li>Enhance healthcare accessibility using IBM Bob &amp; Generative AI</li>\n366 |                         </ul>\n367 |                     </div>\n368 |                 </div>\n369 |             </div>\n370 |         </section>\n371 | \n372 |     </main>\n373 | \n374 |     <!-- Footer -->\n375 |     <footer class=\"footer\">\n376 |         <div class=\"footer-inner\">\n377 |             <div class=\"footer-left\">\n378 |                 <span><i class=\"fas fa-heart-pulse\"></i> HealthAI Assistant</span>\n379 |                 <span class=\"footer-sep\">·</span>\n380 |                 <span>Powered by IBM Bob &amp; Granite 3</span>\n381 |             </div>\n382 |             <div class=\"footer-right\">\n383 |                 <span>🚨 Emergency? Call local emergency services immediately.</span>\n384 |             </div>\n385 |         </div>\n386 |     </footer>\n387 | \n388 |     <!-- Loading Overlay -->\n389 |     <div class=\"loading-overlay\" id=\"loadingOverlay\">\n390 |         <div class=\"loader-box\">\n391 |             <div class=\"spinner\"></div>\n392 |             <p id=\"loadingText\">Connecting to IBM Bob…</p>\n393 |         </div>\n394 |     </div>\n395 | \n396 |     <script src=\"script.js\"></script>\n397 | </body>\n398 | </html>\n399 | ",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_g0vAGto2d7ccfQvd2DD4Jh",
+                "name": "read_file",
+                "arguments": {
+                  "path": "index.html"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Read File {path}",
+                "error": "Failed to read file {path}",
+                "running": "Reading file {path}",
+                "success": "Read file {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "fileMtimes": {
+                "file:///c%3A/Users/kavya/OneDrive/Desktop/Healthcare%20Assistance/index.html": 1782489017794
+              },
+              "durationMs": 705,
+              "timestamp": 1782537800471
+            },
+            "id": "5061c9d30438fc15ce55fe9f5db456dc"
+          },
+          "createdAt": 1782537802934
+        },
+        {
+          "id": "2cc48c8c9f115e2c176262b17b40341d",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Symbol overview for file at path: script.js\n\n7 | const API_ENDPOINT = '/api/chat'\n10 | const SYSTEM_PROMPT = `You are HealthAI, an Agentic AI Healthcare Assistant powered by IBM Bob and IBM Granite 3. Your role is to provide helpful, accurate, empathetic, and evidence-based healthcare information and wellness guidance.\n27 | const WELLNESS_QUERIES\n40 | let conversationHistory = []\n41 | let isProcessing        = false\n42 | let selectedSymptoms    = new Set()\n45 | const chatMessages     = document.getElementById('chatMessages')\n46 | const chatForm         = document.getElementById('chatForm')\n47 | const userInput        = document.getElementById('userInput')\n48 | const sendBtn          = document.getElementById('sendBtn')\n49 | const clearChatBtn     = document.getElementById('clearChat')\n50 | const exportChatBtn    = document.getElementById('exportChat')\n51 | const typingIndicator  = document.getElementById('typingIndicator')\n52 | const loadingOverlay   = document.getElementById('loadingOverlay')\n53 | const loadingText      = document.getElementById('loadingText')\n54 | const navButtons       = document.querySelectorAll('.nav-btn')\n55 | const sections         = document.querySelectorAll('.section')\n56 | const quickButtons     = document.querySelectorAll('.quick-btn')\n57 | const wellnessButtons  = document.querySelectorAll('.wellness-action')\n58 | const symptomTags      = document.querySelectorAll('.symptom-tag')\n59 | const symptomSearch    = document.getElementById('symptomSearch')\n60 | const checkSymptomsBtn = document.getElementById('checkSymptomsBtn')\n61 | const clearSymptoms    = document.getElementById('clearSymptomsBtn')\n62 | const selectedCount    = document.getElementById('selectedCount')\n63 | const selectedList     = document.getElementById('selectedList')\n64 | const symptomsResult   = document.getElementById('symptomsResult')\n69 | document.addEventListener('DOMContentLoaded', () =>\n78 | function setupEventListeners()\n131 | function switchSection(id)\n143 | async function handleChatSubmit(e)\n177 | function addMessage(text, sender)\n208 | function formatText(raw)\n255 | function inlineFormat(text)\n263 | function clearChat()\n273 | function exportConversation()\n296 | async function getAIResponse(userMessage)\n344 | function handleWellnessTopic(topic)\n355 | function toggleSymptom(tag)\n368 | function renderSelectedChips()\n386 | function filterSymptoms()\n395 | function clearAllSymptoms()\n409 | async function checkSymptoms()\n480 | function saveConversationHistory()\n486 | function loadConversationHistory()\n504 | function getTime()\n508 | function autoResizeTextarea()\n514 | window.addEventListener('error',             () => hideLoading())\n515 | window.addEventListener('unhandledrejection', () => hideLoading())\n517 | function showLoading(msg = 'Connecting to IBM Bob…')\n521 | function hideLoading()",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_ONetifqzc01MilX4WtSXLD",
+                "name": "read_file",
+                "arguments": {
+                  "path": "script.js"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Read File {path}",
+                "error": "Failed to read file {path}",
+                "running": "Reading file {path}",
+                "success": "Read file {path}"
+              },
+              "permission": "read",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "durationMs": 3154,
+              "timestamp": 1782537802921
+            },
+            "id": "2cc48c8c9f115e2c176262b17b40341d"
+          },
+          "createdAt": 1782537802938
+        },
+        {
+          "id": "ec155a4b32f088e24755629979d45f66",
+          "role": "assistant",
+          "data": {
+            "role": "assistant",
+            "content": "Now I have a thorough understanding of the entire project. Let me generate the architecture blueprint.",
+            "id": "ec155a4b32f088e24755629979d45f66",
+            "_meta": {
+              "timestamp": 1782537805832,
+              "spend": {
+                "input": 33489,
+                "output": 7988,
+                "cacheRead": 13101,
+                "cacheWrite": 20387,
+                "cost": 0.103692,
+                "contextTokens": 41477,
+                "reasoningTokens": 0
+              }
+            },
+            "toolCalls": [
+              {
+                "id": "tooluse_Y7NKG97Yt9crTLWtJFRYFS",
+                "name": "create_html_artifact",
+                "arguments": {
+                  "id": "healthai_architecture",
+                  "title": "HealthAI — Architecture Blueprint",
+                  "description": "Full system architecture of the IBM Bob–powered AI Healthcare Assistant (HealthAI)",
+                  "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>HealthAI — Architecture Blueprint</title>\n<style>\n  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }\n  body {\n    font-family: -apple-system, \"Segoe UI\", system-ui, sans-serif;\n    font-size: 14px;\n    line-height: 1.6;\n    background: #f7f8fa;\n    color: #1f2328;\n    padding: 32px 16px 48px;\n  }\n  .wrap { max-width: 760px; margin: 0 auto; }\n\n  h1 { font-size: 1.5rem; font-weight: 700; color: #1f2328; margin-bottom: 4px; }\n  .subtitle { color: #57606a; font-size: .9rem; margin-bottom: 32px; }\n\n  /* ── Section headings ── */\n  h2 {\n    font-size: .75rem;\n    font-weight: 700;\n    text-transform: uppercase;\n    letter-spacing: .09em;\n    color: #57606a;\n    margin: 32px 0 12px;\n    padding-bottom: 6px;\n    border-bottom: 1px solid #e5e7eb;\n  }\n\n  /* ── Architecture diagram ── */\n  .diagram {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    padding: 24px 20px;\n    overflow-x: auto;\n  }\n\n  svg { display: block; margin: 0 auto; }\n\n  /* ── Layer cards ── */\n  .layers { display: flex; flex-direction: column; gap: 12px; margin-top: 0; }\n  .layer {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    padding: 16px 20px;\n  }\n  .layer-title {\n    font-size: .78rem;\n    font-weight: 700;\n    text-transform: uppercase;\n    letter-spacing: .07em;\n    margin-bottom: 10px;\n  }\n  .layer.l-browser .layer-title { color: #3b82d4; }\n  .layer.l-server  .layer-title { color: #7c5cd8; }\n  .layer.l-ibm     .layer-title { color: #198038; }\n\n  .items { display: flex; flex-wrap: wrap; gap: 8px; }\n  .item {\n    background: #f7f8fa;\n    border: 1px solid #e5e7eb;\n    border-radius: 6px;\n    padding: 6px 12px;\n    font-size: .82rem;\n    color: #1f2328;\n  }\n  .item code {\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    font-size: .78rem;\n    color: #57606a;\n  }\n  .item.accent { border-color: #3b82d4; background: #f0f5ff; }\n  .item.purple { border-color: #7c5cd8; background: #f8f4ff; }\n  .item.green  { border-color: #198038; background: #f0faf2; }\n\n  /* ── Data flow table ── */\n  table {\n    width: 100%;\n    border-collapse: collapse;\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    overflow: hidden;\n    font-size: .85rem;\n  }\n  thead th {\n    background: #f7f8fa;\n    border-bottom: 1px solid #e5e7eb;\n    text-align: left;\n    padding: 10px 14px;\n    font-weight: 600;\n    color: #57606a;\n    font-size: .78rem;\n    text-transform: uppercase;\n    letter-spacing: .06em;\n  }\n  tbody td {\n    padding: 10px 14px;\n    border-bottom: 1px solid #f0f1f3;\n    vertical-align: top;\n  }\n  tbody tr:last-child td { border-bottom: none; }\n  tbody tr:hover td { background: #f7f8fa; }\n  .step-badge {\n    display: inline-block;\n    background: #3b82d4;\n    color: #fff;\n    border-radius: 50%;\n    width: 22px; height: 22px;\n    text-align: center;\n    line-height: 22px;\n    font-size: .72rem;\n    font-weight: 700;\n    flex-shrink: 0;\n  }\n  td code {\n    background: #f0f1f3;\n    border: 1px solid #e5e7eb;\n    border-radius: 4px;\n    padding: 1px 6px;\n    font-size: .78rem;\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    color: #57606a;\n  }\n\n  /* ── Feature grid ── */\n  .feat-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n  }\n  .feat {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 14px 16px;\n  }\n  .feat-name { font-weight: 600; font-size: .88rem; margin-bottom: 4px; }\n  .feat-desc { font-size: .82rem; color: #57606a; line-height: 1.5; }\n\n  /* ── Security / config table ── */\n  .config-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n  }\n  .cfg {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 12px 16px;\n  }\n  .cfg-key { font-size: .78rem; color: #57606a; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; font-weight: 600; }\n  .cfg-val { font-size: .88rem; font-weight: 500; color: #1f2328; }\n  .cfg-val code {\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    font-size: .78rem;\n    color: #57606a;\n  }\n\n  /* ── Badge ── */\n  .badge {\n    display: inline-block;\n    border-radius: 20px;\n    padding: 2px 9px;\n    font-size: .72rem;\n    font-weight: 600;\n  }\n  .badge-blue   { background: #dbeafe; color: #1d4ed8; }\n  .badge-green  { background: #dcfce7; color: #15803d; }\n  .badge-purple { background: #ede9fe; color: #6d28d9; }\n  .badge-gray   { background: #f3f4f6; color: #374151; }\n  .badge-red    { background: #fee2e2; color: #dc2626; }\n\n  /* ── Footer ── */\n  .footer {\n    margin-top: 48px;\n    padding-top: 14px;\n    border-top: 1px solid #e5e7eb;\n    text-align: center;\n    font-size: .75rem;\n    color: #57606a;\n  }\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n\n  <h1>HealthAI — Architecture Blueprint</h1>\n  <p class=\"subtitle\">AI-Powered Medical Chatbot · Powered by IBM Bob &amp; Granite 3 · v1.0.0</p>\n\n  <!-- ── ARCHITECTURE DIAGRAM ── -->\n  <h2>System Architecture Diagram</h2>\n  <div class=\"diagram\">\n    <svg width=\"700\" height=\"420\" viewBox=\"0 0 700 420\" xmlns=\"http://www.w3.org/2000/svg\"\n         font-family=\"-apple-system, Segoe UI, system-ui, sans-serif\" font-size=\"12\">\n\n      <!-- BROWSER LAYER -->\n      <rect x=\"20\" y=\"20\" width=\"660\" height=\"130\" rx=\"10\" fill=\"#f0f5ff\" stroke=\"#3b82d4\" stroke-width=\"1.5\"/>\n      <text x=\"36\" y=\"42\" font-size=\"10\" font-weight=\"700\" fill=\"#3b82d4\" letter-spacing=\"1\">BROWSER (CLIENT)</text>\n\n      <!-- index.html -->\n      <rect x=\"40\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"95\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">index.html</text>\n      <text x=\"95\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Chat · Wellness</text>\n      <text x=\"95\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Symptoms · About</text>\n\n      <!-- styles.css -->\n      <rect x=\"170\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"225\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">styles.css</text>\n      <text x=\"225\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">IBM Carbon</text>\n      <text x=\"225\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Design System</text>\n\n      <!-- script.js -->\n      <rect x=\"300\" y=\"54\" width=\"130\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"365\" y=\"74\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">script.js</text>\n      <text x=\"365\" y=\"90\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Chat Engine</text>\n      <text x=\"365\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Symptom Checker</text>\n      <text x=\"365\" y=\"120\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Wellness Router</text>\n\n      <!-- localStorage -->\n      <rect x=\"450\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"505\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">localStorage</text>\n      <text x=\"505\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Conversation</text>\n      <text x=\"505\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">History Cache</text>\n\n      <!-- config.json -->\n      <rect x=\"580\" y=\"54\" width=\"80\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"620\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">config</text>\n      <text x=\"620\" y=\"94\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">.json</text>\n      <text x=\"620\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">UI Settings</text>\n\n      <!-- Arrow: Browser → Server -->\n      <line x1=\"350\" y1=\"150\" x2=\"350\" y2=\"188\" stroke=\"#57606a\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\" marker-end=\"url(#arr)\"/>\n      <text x=\"360\" y=\"173\" font-size=\"10\" fill=\"#57606a\">POST /api/chat</text>\n\n      <!-- SERVER LAYER -->\n      <rect x=\"20\" y=\"190\" width=\"660\" height=\"110\" rx=\"10\" fill=\"#f8f4ff\" stroke=\"#7c5cd8\" stroke-width=\"1.5\"/>\n      <text x=\"36\" y=\"212\" font-size=\"10\" font-weight=\"700\" fill=\"#7c5cd8\" letter-spacing=\"1\">EXPRESS SERVER (server.js · Node.js)</text>\n\n      <rect x=\"40\" y=\"222\" width=\"130\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"105\" y=\"246\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">Static Serve</text>\n      <text x=\"105\" y=\"264\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">express.static</text>\n\n      <rect x=\"190\" y=\"222\" width=\"160\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"270\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">POST /api/chat</text>\n      <text x=\"270\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Prompt proxy</text>\n      <text x=\"270\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">+ param forwarding</text>\n\n      <rect x=\"370\" y=\"222\" width=\"150\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"445\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">IAM Token Cache</text>\n      <text x=\"445\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">getAccessToken()</text>\n      <text x=\"445\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">60 s refresh guard</text>\n\n      <rect x=\"540\" y=\"222\" width=\"120\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"600\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">Catch-all SPA</text>\n      <text x=\"600\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">GET * →</text>\n      <text x=\"600\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">index.html</text>\n\n      <!-- Arrow: Server → IBM IAM -->\n      <line x1=\"445\" y1=\"300\" x2=\"445\" y2=\"335\" stroke=\"#57606a\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\" marker-end=\"url(#arr)\"/>\n      <text x=\"454\" y=\"320\" font-size=\"10\" fill=\"#57606a\">Bearer token</text>\n\n      <!-- Arrow: Server → WatsonX -->\n      <line x1=\"270\" y1=\"300\" x2=\"270\" y2=\"335\" stroke=\"#57606a\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\" marker-end=\"url(#arr)\"/>\n      <text x=\"166\" y=\"320\" font-size=\"10\" fill=\"#57606a\">WatsonX inference call</text>\n\n      <!-- IBM LAYER -->\n      <rect x=\"20\" y=\"337\" width=\"660\" height=\"65\" rx=\"10\" fill=\"#f0faf2\" stroke=\"#198038\" stroke-width=\"1.5\"/>\n      <text x=\"36\" y=\"358\" font-size=\"10\" font-weight=\"700\" fill=\"#198038\" letter-spacing=\"1\">IBM CLOUD (us-south)</text>\n\n      <rect x=\"40\" y=\"366\" width=\"220\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"/>\n      <text x=\"150\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">IAM · iam.cloud.ibm.com/identity/token</text>\n\n      <rect x=\"280\" y=\"366\" width=\"210\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"/>\n      <text x=\"385\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">WatsonX · ml/v1/text/generation</text>\n\n      <rect x=\"510\" y=\"366\" width=\"160\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"/>\n      <text x=\"590\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">Granite 3 · 8b-instruct</text>\n\n      <!-- Arrowhead marker -->\n      <defs>\n        <marker id=\"arr\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n          <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#57606a\"/>\n        </marker>\n      </defs>\n    </svg>\n  </div>\n\n  <!-- ── LAYER BREAKDOWN ── -->\n  <h2>Layer Breakdown</h2>\n  <div class=\"layers\">\n\n    <div class=\"layer l-browser\">\n      <div class=\"layer-title\">Layer 1 — Browser / Client</div>\n      <div class=\"items\">\n        <div class=\"item accent\"><strong>index.html</strong> · SPA shell, 4 sections</div>\n        <div class=\"item accent\"><strong>styles.css</strong> · IBM Carbon-inspired design system</div>\n        <div class=\"item accent\"><strong>script.js</strong> · Chat engine, symptom checker, wellness router</div>\n        <div class=\"item accent\"><strong>localStorage</strong> · Conversation history persistence</div>\n        <div class=\"item accent\"><strong>config.json</strong> · UI &amp; model settings</div>\n        <div class=\"item accent\">Font Awesome 6.4 · IBM Plex Sans (CDN)</div>\n      </div>\n    </div>\n\n    <div class=\"layer l-server\">\n      <div class=\"layer-title\">Layer 2 — Express Backend Proxy (server.js · Node.js v14+)</div>\n      <div class=\"items\">\n        <div class=\"item purple\"><code>POST /api/chat</code> — prompt proxy with param forwarding</div>\n        <div class=\"item purple\"><code>getAccessToken()</code> — IAM token fetch &amp; 60 s cache</div>\n        <div class=\"item purple\"><code>express.static()</code> — serves all frontend assets</div>\n        <div class=\"item purple\"><code>GET *</code> — SPA catch-all → index.html</div>\n        <div class=\"item purple\">Port: <code>3000</code> (env: <code>PORT</code>)</div>\n      </div>\n    </div>\n\n    <div class=\"layer l-ibm\">\n      <div class=\"layer-title\">Layer 3 — IBM Cloud (us-south)</div>\n      <div class=\"items\">\n        <div class=\"item green\">IBM IAM Token endpoint</div>\n        <div class=\"item green\">WatsonX AI · <code>us-south.ml.cloud.ibm.com</code></div>\n        <div class=\"item green\">Model · <code>ibm/granite-3-8b-instruct</code></div>\n        <div class=\"item green\">API version · <code>2023-05-29</code></div>\n        <div class=\"item green\">Project ID · <code>a0a5cc1f-…-f9c19c29b36e</code></div>\n      </div>\n    </div>\n\n  </div>\n\n  <!-- ── REQUEST / RESPONSE DATA FLOW ── -->\n  <h2>Request / Response Data Flow</h2>\n  <table>\n    <thead>\n      <tr>\n        <th>#</th><th>From</th><th>To</th><th>Payload / Action</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td><span class=\"step-badge\">1</span></td>\n        <td>User</td>\n        <td>Browser (script.js)</td>\n        <td>Types message / selects symptom / clicks Wellness card</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">2</span></td>\n        <td>script.js</td>\n        <td>script.js</td>\n        <td>Builds <code>SYSTEM_PROMPT</code> + conversation history + user message → full prompt string</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">3</span></td>\n        <td>Browser</td>\n        <td><code>POST /api/chat</code></td>\n        <td>JSON body: <code>{ prompt, parameters }</code></td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">4</span></td>\n        <td>server.js</td>\n        <td>IBM IAM</td>\n        <td><code>grant_type=apikey</code> → returns <code>access_token</code> (cached up to expiry − 60 s)</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">5</span></td>\n        <td>server.js</td>\n        <td>WatsonX AI</td>\n        <td><code>Bearer token</code> + model/project/prompt/params → inference request</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">6</span></td>\n        <td>WatsonX / Granite 3</td>\n        <td>server.js</td>\n        <td>JSON <code>{ results[0].generated_text }</code></td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">7</span></td>\n        <td>server.js</td>\n        <td>Browser</td>\n        <td>Proxied JSON response forwarded as-is</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">8</span></td>\n        <td>script.js</td>\n        <td>DOM</td>\n        <td>Parses, formats Markdown-like text, renders bubble, saves to localStorage</td>\n      </tr>\n    </tbody>\n  </table>\n\n  <!-- ── FRONTEND SECTIONS ── -->\n  <h2>Frontend Sections &amp; Features</h2>\n  <div class=\"feat-grid\">\n    <div class=\"feat\">\n      <div class=\"feat-name\">💬 Chat</div>\n      <div class=\"feat-desc\">Full conversational interface with system prompt, 20-message rolling history, typing indicator, export &amp; clear controls, auto-resize textarea.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">🌿 Wellness Dashboard</div>\n      <div class=\"feat-desc\">9 topic cards (Heart, Nutrition, Fitness, Mental Health, Sleep, Preventive Care, Diabetes, Hydration, Women's Health) — each fires a pre-built AI query.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">🩺 Symptom Awareness Tool</div>\n      <div class=\"feat-desc\">22 searchable/filterable symptom tags with chip UI, emergency keyword detection, structured AI health-info response panel.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">ℹ️ About</div>\n      <div class=\"feat-desc\">Tech stack, mission statement, key capabilities, important medical disclaimer, and project objectives.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">⚡ Quick Topics Sidebar</div>\n      <div class=\"feat-desc\">8 one-click health queries (Cold &amp; Flu, Sleep Tips, Healthy Diet, Stress Relief, Exercise Plan, Immunity, Hydration, Heart Health).</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">📦 Persistence</div>\n      <div class=\"feat-desc\">Conversation history saved to <code>localStorage</code> and restored on page load (max 20 messages).</div>\n    </div>\n  </div>\n\n  <!-- ── MODEL CONFIG ── -->\n  <h2>IBM Granite 3 Model Configuration</h2>\n  <div class=\"config-grid\">\n    <div class=\"cfg\"><div class=\"cfg-key\">Model ID</div><div class=\"cfg-val\"><code>ibm/granite-3-8b-instruct</code></div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Decoding</div><div class=\"cfg-val\">Greedy</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Max New Tokens</div><div class=\"cfg-val\">1 024 (server) · 900 (config)</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Min New Tokens</div><div class=\"cfg-val\">10</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Repetition Penalty</div><div class=\"cfg-val\">1.05</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Temperature</div><div class=\"cfg-val\">0.7 (config)</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Top-P</div><div class=\"cfg-val\">1.0</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Stop Sequences</div><div class=\"cfg-val\"><code>&lt;|user|&gt;</code> · <code>&lt;|system|&gt;</code></div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Region</div><div class=\"cfg-val\">us-south</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">API Version</div><div class=\"cfg-val\">2023-05-29</div></div>\n  </div>\n\n  <!-- ── SECURITY & DESIGN ── -->\n  <h2>Security &amp; Design Notes</h2>\n  <table>\n    <thead>\n      <tr><th>Concern</th><th>Approach</th><th>Status</th></tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>API Key exposure</td>\n        <td>Key lives only in <code>server.js</code> — never sent to the browser</td>\n        <td><span class=\"badge badge-green\">Mitigated</span></td>\n      </tr>\n      <tr>\n        <td>IBM IAM token</td>\n        <td>Cached server-side with 60 s pre-expiry refresh; never leaves the server</td>\n        <td><span class=\"badge badge-green\">Mitigated</span></td>\n      </tr>\n      <tr>\n        <td>CORS</td>\n        <td>Same-origin by default (Express serves both static &amp; API)</td>\n        <td><span class=\"badge badge-green\">OK</span></td>\n      </tr>\n      <tr>\n        <td>Rate limiting</td>\n        <td>Not implemented</td>\n        <td><span class=\"badge badge-red\">TODO</span></td>\n      </tr>\n      <tr>\n        <td>Data encryption (at rest)</td>\n        <td>Not implemented</td>\n        <td><span class=\"badge badge-red\">TODO</span></td>\n      </tr>\n      <tr>\n        <td>Input validation</td>\n        <td>Server checks <code>prompt</code> presence; returns 400 if missing</td>\n        <td><span class=\"badge badge-blue\">Partial</span></td>\n      </tr>\n      <tr>\n        <td>Error propagation</td>\n        <td>Global <code>window.error</code> &amp; <code>unhandledrejection</code> hide loading overlay</td>\n        <td><span class=\"badge badge-green\">Handled</span></td>\n      </tr>\n    </tbody>\n  </table>\n\n  <!-- ── TECH STACK ── -->\n  <h2>Technology Stack</h2>\n  <div class=\"items\" style=\"background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;gap:8px;display:flex;flex-wrap:wrap;\">\n    <span class=\"badge badge-blue\">Node.js ≥ 14</span>\n    <span class=\"badge badge-purple\">Express 4.18</span>\n    <span class=\"badge badge-blue\">Vanilla JS (ES2022)</span>\n    <span class=\"badge badge-blue\">HTML5</span>\n    <span class=\"badge badge-blue\">CSS3 (custom properties)</span>\n    <span class=\"badge badge-green\">IBM WatsonX AI</span>\n    <span class=\"badge badge-green\">IBM Granite 3 (8B)</span>\n    <span class=\"badge badge-green\">IBM IAM OAuth2</span>\n    <span class=\"badge badge-purple\">IBM Carbon Design</span>\n    <span class=\"badge badge-gray\">Font Awesome 6.4</span>\n    <span class=\"badge badge-gray\">IBM Plex Sans</span>\n    <span class=\"badge badge-gray\">localStorage API</span>\n    <span class=\"badge badge-gray\">REST / fetch()</span>\n  </div>\n\n  <div class=\"footer\">Made with IBM Bob</div>\n</div>\n</body>\n</html>\n"
+                },
+                "isError": false
+              }
+            ]
+          },
+          "createdAt": 1782537906932
+        },
+        {
+          "id": "d70abdf427e43730c4c47d4f8c538f38",
+          "role": "tool",
+          "data": {
+            "role": "tool",
+            "content": "Created artifact \"HealthAI — Architecture Blueprint\" (id: healthai_architecture).",
+            "toolUsage": {
+              "signature": {
+                "id": "tooluse_Y7NKG97Yt9crTLWtJFRYFS",
+                "name": "create_html_artifact",
+                "arguments": {
+                  "id": "healthai_architecture",
+                  "title": "HealthAI — Architecture Blueprint",
+                  "description": "Full system architecture of the IBM Bob–powered AI Healthcare Assistant (HealthAI)",
+                  "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>HealthAI — Architecture Blueprint</title>\n<style>\n  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }\n  body {\n    font-family: -apple-system, \"Segoe UI\", system-ui, sans-serif;\n    font-size: 14px;\n    line-height: 1.6;\n    background: #f7f8fa;\n    color: #1f2328;\n    padding: 32px 16px 48px;\n  }\n  .wrap { max-width: 760px; margin: 0 auto; }\n\n  h1 { font-size: 1.5rem; font-weight: 700; color: #1f2328; margin-bottom: 4px; }\n  .subtitle { color: #57606a; font-size: .9rem; margin-bottom: 32px; }\n\n  /* ── Section headings ── */\n  h2 {\n    font-size: .75rem;\n    font-weight: 700;\n    text-transform: uppercase;\n    letter-spacing: .09em;\n    color: #57606a;\n    margin: 32px 0 12px;\n    padding-bottom: 6px;\n    border-bottom: 1px solid #e5e7eb;\n  }\n\n  /* ── Architecture diagram ── */\n  .diagram {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    padding: 24px 20px;\n    overflow-x: auto;\n  }\n\n  svg { display: block; margin: 0 auto; }\n\n  /* ── Layer cards ── */\n  .layers { display: flex; flex-direction: column; gap: 12px; margin-top: 0; }\n  .layer {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    padding: 16px 20px;\n  }\n  .layer-title {\n    font-size: .78rem;\n    font-weight: 700;\n    text-transform: uppercase;\n    letter-spacing: .07em;\n    margin-bottom: 10px;\n  }\n  .layer.l-browser .layer-title { color: #3b82d4; }\n  .layer.l-server  .layer-title { color: #7c5cd8; }\n  .layer.l-ibm     .layer-title { color: #198038; }\n\n  .items { display: flex; flex-wrap: wrap; gap: 8px; }\n  .item {\n    background: #f7f8fa;\n    border: 1px solid #e5e7eb;\n    border-radius: 6px;\n    padding: 6px 12px;\n    font-size: .82rem;\n    color: #1f2328;\n  }\n  .item code {\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    font-size: .78rem;\n    color: #57606a;\n  }\n  .item.accent { border-color: #3b82d4; background: #f0f5ff; }\n  .item.purple { border-color: #7c5cd8; background: #f8f4ff; }\n  .item.green  { border-color: #198038; background: #f0faf2; }\n\n  /* ── Data flow table ── */\n  table {\n    width: 100%;\n    border-collapse: collapse;\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    overflow: hidden;\n    font-size: .85rem;\n  }\n  thead th {\n    background: #f7f8fa;\n    border-bottom: 1px solid #e5e7eb;\n    text-align: left;\n    padding: 10px 14px;\n    font-weight: 600;\n    color: #57606a;\n    font-size: .78rem;\n    text-transform: uppercase;\n    letter-spacing: .06em;\n  }\n  tbody td {\n    padding: 10px 14px;\n    border-bottom: 1px solid #f0f1f3;\n    vertical-align: top;\n  }\n  tbody tr:last-child td { border-bottom: none; }\n  tbody tr:hover td { background: #f7f8fa; }\n  .step-badge {\n    display: inline-block;\n    background: #3b82d4;\n    color: #fff;\n    border-radius: 50%;\n    width: 22px; height: 22px;\n    text-align: center;\n    line-height: 22px;\n    font-size: .72rem;\n    font-weight: 700;\n    flex-shrink: 0;\n  }\n  td code {\n    background: #f0f1f3;\n    border: 1px solid #e5e7eb;\n    border-radius: 4px;\n    padding: 1px 6px;\n    font-size: .78rem;\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    color: #57606a;\n  }\n\n  /* ── Feature grid ── */\n  .feat-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n  }\n  .feat {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 14px 16px;\n  }\n  .feat-name { font-weight: 600; font-size: .88rem; margin-bottom: 4px; }\n  .feat-desc { font-size: .82rem; color: #57606a; line-height: 1.5; }\n\n  /* ── Security / config table ── */\n  .config-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n  }\n  .cfg {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 12px 16px;\n  }\n  .cfg-key { font-size: .78rem; color: #57606a; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; font-weight: 600; }\n  .cfg-val { font-size: .88rem; font-weight: 500; color: #1f2328; }\n  .cfg-val code {\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    font-size: .78rem;\n    color: #57606a;\n  }\n\n  /* ── Badge ── */\n  .badge {\n    display: inline-block;\n    border-radius: 20px;\n    padding: 2px 9px;\n    font-size: .72rem;\n    font-weight: 600;\n  }\n  .badge-blue   { background: #dbeafe; color: #1d4ed8; }\n  .badge-green  { background: #dcfce7; color: #15803d; }\n  .badge-purple { background: #ede9fe; color: #6d28d9; }\n  .badge-gray   { background: #f3f4f6; color: #374151; }\n  .badge-red    { background: #fee2e2; color: #dc2626; }\n\n  /* ── Footer ── */\n  .footer {\n    margin-top: 48px;\n    padding-top: 14px;\n    border-top: 1px solid #e5e7eb;\n    text-align: center;\n    font-size: .75rem;\n    color: #57606a;\n  }\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n\n  <h1>HealthAI — Architecture Blueprint</h1>\n  <p class=\"subtitle\">AI-Powered Medical Chatbot · Powered by IBM Bob &amp; Granite 3 · v1.0.0</p>\n\n  <!-- ── ARCHITECTURE DIAGRAM ── -->\n  <h2>System Architecture Diagram</h2>\n  <div class=\"diagram\">\n    <svg width=\"700\" height=\"420\" viewBox=\"0 0 700 420\" xmlns=\"http://www.w3.org/2000/svg\"\n         font-family=\"-apple-system, Segoe UI, system-ui, sans-serif\" font-size=\"12\">\n\n      <!-- BROWSER LAYER -->\n      <rect x=\"20\" y=\"20\" width=\"660\" height=\"130\" rx=\"10\" fill=\"#f0f5ff\" stroke=\"#3b82d4\" stroke-width=\"1.5\"/>\n      <text x=\"36\" y=\"42\" font-size=\"10\" font-weight=\"700\" fill=\"#3b82d4\" letter-spacing=\"1\">BROWSER (CLIENT)</text>\n\n      <!-- index.html -->\n      <rect x=\"40\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"95\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">index.html</text>\n      <text x=\"95\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Chat · Wellness</text>\n      <text x=\"95\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Symptoms · About</text>\n\n      <!-- styles.css -->\n      <rect x=\"170\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"225\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">styles.css</text>\n      <text x=\"225\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">IBM Carbon</text>\n      <text x=\"225\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Design System</text>\n\n      <!-- script.js -->\n      <rect x=\"300\" y=\"54\" width=\"130\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"365\" y=\"74\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">script.js</text>\n      <text x=\"365\" y=\"90\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Chat Engine</text>\n      <text x=\"365\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Symptom Checker</text>\n      <text x=\"365\" y=\"120\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Wellness Router</text>\n\n      <!-- localStorage -->\n      <rect x=\"450\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"505\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">localStorage</text>\n      <text x=\"505\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Conversation</text>\n      <text x=\"505\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">History Cache</text>\n\n      <!-- config.json -->\n      <rect x=\"580\" y=\"54\" width=\"80\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"/>\n      <text x=\"620\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">config</text>\n      <text x=\"620\" y=\"94\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">.json</text>\n      <text x=\"620\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">UI Settings</text>\n\n      <!-- Arrow: Browser → Server -->\n      <line x1=\"350\" y1=\"150\" x2=\"350\" y2=\"188\" stroke=\"#57606a\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\" marker-end=\"url(#arr)\"/>\n      <text x=\"360\" y=\"173\" font-size=\"10\" fill=\"#57606a\">POST /api/chat</text>\n\n      <!-- SERVER LAYER -->\n      <rect x=\"20\" y=\"190\" width=\"660\" height=\"110\" rx=\"10\" fill=\"#f8f4ff\" stroke=\"#7c5cd8\" stroke-width=\"1.5\"/>\n      <text x=\"36\" y=\"212\" font-size=\"10\" font-weight=\"700\" fill=\"#7c5cd8\" letter-spacing=\"1\">EXPRESS SERVER (server.js · Node.js)</text>\n\n      <rect x=\"40\" y=\"222\" width=\"130\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"105\" y=\"246\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">Static Serve</text>\n      <text x=\"105\" y=\"264\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">express.static</text>\n\n      <rect x=\"190\" y=\"222\" width=\"160\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"270\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">POST /api/chat</text>\n      <text x=\"270\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Prompt proxy</text>\n      <text x=\"270\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">+ param forwarding</text>\n\n      <rect x=\"370\" y=\"222\" width=\"150\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"445\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">IAM Token Cache</text>\n      <text x=\"445\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">getAccessToken()</text>\n      <text x=\"445\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">60 s refresh guard</text>\n\n      <rect x=\"540\" y=\"222\" width=\"120\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"/>\n      <text x=\"600\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">Catch-all SPA</text>\n      <text x=\"600\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">GET * →</text>\n      <text x=\"600\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">index.html</text>\n\n      <!-- Arrow: Server → IBM IAM -->\n      <line x1=\"445\" y1=\"300\" x2=\"445\" y2=\"335\" stroke=\"#57606a\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\" marker-end=\"url(#arr)\"/>\n      <text x=\"454\" y=\"320\" font-size=\"10\" fill=\"#57606a\">Bearer token</text>\n\n      <!-- Arrow: Server → WatsonX -->\n      <line x1=\"270\" y1=\"300\" x2=\"270\" y2=\"335\" stroke=\"#57606a\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\" marker-end=\"url(#arr)\"/>\n      <text x=\"166\" y=\"320\" font-size=\"10\" fill=\"#57606a\">WatsonX inference call</text>\n\n      <!-- IBM LAYER -->\n      <rect x=\"20\" y=\"337\" width=\"660\" height=\"65\" rx=\"10\" fill=\"#f0faf2\" stroke=\"#198038\" stroke-width=\"1.5\"/>\n      <text x=\"36\" y=\"358\" font-size=\"10\" font-weight=\"700\" fill=\"#198038\" letter-spacing=\"1\">IBM CLOUD (us-south)</text>\n\n      <rect x=\"40\" y=\"366\" width=\"220\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"/>\n      <text x=\"150\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">IAM · iam.cloud.ibm.com/identity/token</text>\n\n      <rect x=\"280\" y=\"366\" width=\"210\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"/>\n      <text x=\"385\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">WatsonX · ml/v1/text/generation</text>\n\n      <rect x=\"510\" y=\"366\" width=\"160\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"/>\n      <text x=\"590\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">Granite 3 · 8b-instruct</text>\n\n      <!-- Arrowhead marker -->\n      <defs>\n        <marker id=\"arr\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n          <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#57606a\"/>\n        </marker>\n      </defs>\n    </svg>\n  </div>\n\n  <!-- ── LAYER BREAKDOWN ── -->\n  <h2>Layer Breakdown</h2>\n  <div class=\"layers\">\n\n    <div class=\"layer l-browser\">\n      <div class=\"layer-title\">Layer 1 — Browser / Client</div>\n      <div class=\"items\">\n        <div class=\"item accent\"><strong>index.html</strong> · SPA shell, 4 sections</div>\n        <div class=\"item accent\"><strong>styles.css</strong> · IBM Carbon-inspired design system</div>\n        <div class=\"item accent\"><strong>script.js</strong> · Chat engine, symptom checker, wellness router</div>\n        <div class=\"item accent\"><strong>localStorage</strong> · Conversation history persistence</div>\n        <div class=\"item accent\"><strong>config.json</strong> · UI &amp; model settings</div>\n        <div class=\"item accent\">Font Awesome 6.4 · IBM Plex Sans (CDN)</div>\n      </div>\n    </div>\n\n    <div class=\"layer l-server\">\n      <div class=\"layer-title\">Layer 2 — Express Backend Proxy (server.js · Node.js v14+)</div>\n      <div class=\"items\">\n        <div class=\"item purple\"><code>POST /api/chat</code> — prompt proxy with param forwarding</div>\n        <div class=\"item purple\"><code>getAccessToken()</code> — IAM token fetch &amp; 60 s cache</div>\n        <div class=\"item purple\"><code>express.static()</code> — serves all frontend assets</div>\n        <div class=\"item purple\"><code>GET *</code> — SPA catch-all → index.html</div>\n        <div class=\"item purple\">Port: <code>3000</code> (env: <code>PORT</code>)</div>\n      </div>\n    </div>\n\n    <div class=\"layer l-ibm\">\n      <div class=\"layer-title\">Layer 3 — IBM Cloud (us-south)</div>\n      <div class=\"items\">\n        <div class=\"item green\">IBM IAM Token endpoint</div>\n        <div class=\"item green\">WatsonX AI · <code>us-south.ml.cloud.ibm.com</code></div>\n        <div class=\"item green\">Model · <code>ibm/granite-3-8b-instruct</code></div>\n        <div class=\"item green\">API version · <code>2023-05-29</code></div>\n        <div class=\"item green\">Project ID · <code>a0a5cc1f-…-f9c19c29b36e</code></div>\n      </div>\n    </div>\n\n  </div>\n\n  <!-- ── REQUEST / RESPONSE DATA FLOW ── -->\n  <h2>Request / Response Data Flow</h2>\n  <table>\n    <thead>\n      <tr>\n        <th>#</th><th>From</th><th>To</th><th>Payload / Action</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td><span class=\"step-badge\">1</span></td>\n        <td>User</td>\n        <td>Browser (script.js)</td>\n        <td>Types message / selects symptom / clicks Wellness card</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">2</span></td>\n        <td>script.js</td>\n        <td>script.js</td>\n        <td>Builds <code>SYSTEM_PROMPT</code> + conversation history + user message → full prompt string</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">3</span></td>\n        <td>Browser</td>\n        <td><code>POST /api/chat</code></td>\n        <td>JSON body: <code>{ prompt, parameters }</code></td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">4</span></td>\n        <td>server.js</td>\n        <td>IBM IAM</td>\n        <td><code>grant_type=apikey</code> → returns <code>access_token</code> (cached up to expiry − 60 s)</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">5</span></td>\n        <td>server.js</td>\n        <td>WatsonX AI</td>\n        <td><code>Bearer token</code> + model/project/prompt/params → inference request</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">6</span></td>\n        <td>WatsonX / Granite 3</td>\n        <td>server.js</td>\n        <td>JSON <code>{ results[0].generated_text }</code></td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">7</span></td>\n        <td>server.js</td>\n        <td>Browser</td>\n        <td>Proxied JSON response forwarded as-is</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">8</span></td>\n        <td>script.js</td>\n        <td>DOM</td>\n        <td>Parses, formats Markdown-like text, renders bubble, saves to localStorage</td>\n      </tr>\n    </tbody>\n  </table>\n\n  <!-- ── FRONTEND SECTIONS ── -->\n  <h2>Frontend Sections &amp; Features</h2>\n  <div class=\"feat-grid\">\n    <div class=\"feat\">\n      <div class=\"feat-name\">💬 Chat</div>\n      <div class=\"feat-desc\">Full conversational interface with system prompt, 20-message rolling history, typing indicator, export &amp; clear controls, auto-resize textarea.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">🌿 Wellness Dashboard</div>\n      <div class=\"feat-desc\">9 topic cards (Heart, Nutrition, Fitness, Mental Health, Sleep, Preventive Care, Diabetes, Hydration, Women's Health) — each fires a pre-built AI query.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">🩺 Symptom Awareness Tool</div>\n      <div class=\"feat-desc\">22 searchable/filterable symptom tags with chip UI, emergency keyword detection, structured AI health-info response panel.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">ℹ️ About</div>\n      <div class=\"feat-desc\">Tech stack, mission statement, key capabilities, important medical disclaimer, and project objectives.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">⚡ Quick Topics Sidebar</div>\n      <div class=\"feat-desc\">8 one-click health queries (Cold &amp; Flu, Sleep Tips, Healthy Diet, Stress Relief, Exercise Plan, Immunity, Hydration, Heart Health).</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">📦 Persistence</div>\n      <div class=\"feat-desc\">Conversation history saved to <code>localStorage</code> and restored on page load (max 20 messages).</div>\n    </div>\n  </div>\n\n  <!-- ── MODEL CONFIG ── -->\n  <h2>IBM Granite 3 Model Configuration</h2>\n  <div class=\"config-grid\">\n    <div class=\"cfg\"><div class=\"cfg-key\">Model ID</div><div class=\"cfg-val\"><code>ibm/granite-3-8b-instruct</code></div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Decoding</div><div class=\"cfg-val\">Greedy</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Max New Tokens</div><div class=\"cfg-val\">1 024 (server) · 900 (config)</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Min New Tokens</div><div class=\"cfg-val\">10</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Repetition Penalty</div><div class=\"cfg-val\">1.05</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Temperature</div><div class=\"cfg-val\">0.7 (config)</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Top-P</div><div class=\"cfg-val\">1.0</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Stop Sequences</div><div class=\"cfg-val\"><code>&lt;|user|&gt;</code> · <code>&lt;|system|&gt;</code></div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Region</div><div class=\"cfg-val\">us-south</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">API Version</div><div class=\"cfg-val\">2023-05-29</div></div>\n  </div>\n\n  <!-- ── SECURITY & DESIGN ── -->\n  <h2>Security &amp; Design Notes</h2>\n  <table>\n    <thead>\n      <tr><th>Concern</th><th>Approach</th><th>Status</th></tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>API Key exposure</td>\n        <td>Key lives only in <code>server.js</code> — never sent to the browser</td>\n        <td><span class=\"badge badge-green\">Mitigated</span></td>\n      </tr>\n      <tr>\n        <td>IBM IAM token</td>\n        <td>Cached server-side with 60 s pre-expiry refresh; never leaves the server</td>\n        <td><span class=\"badge badge-green\">Mitigated</span></td>\n      </tr>\n      <tr>\n        <td>CORS</td>\n        <td>Same-origin by default (Express serves both static &amp; API)</td>\n        <td><span class=\"badge badge-green\">OK</span></td>\n      </tr>\n      <tr>\n        <td>Rate limiting</td>\n        <td>Not implemented</td>\n        <td><span class=\"badge badge-red\">TODO</span></td>\n      </tr>\n      <tr>\n        <td>Data encryption (at rest)</td>\n        <td>Not implemented</td>\n        <td><span class=\"badge badge-red\">TODO</span></td>\n      </tr>\n      <tr>\n        <td>Input validation</td>\n        <td>Server checks <code>prompt</code> presence; returns 400 if missing</td>\n        <td><span class=\"badge badge-blue\">Partial</span></td>\n      </tr>\n      <tr>\n        <td>Error propagation</td>\n        <td>Global <code>window.error</code> &amp; <code>unhandledrejection</code> hide loading overlay</td>\n        <td><span class=\"badge badge-green\">Handled</span></td>\n      </tr>\n    </tbody>\n  </table>\n\n  <!-- ── TECH STACK ── -->\n  <h2>Technology Stack</h2>\n  <div class=\"items\" style=\"background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;gap:8px;display:flex;flex-wrap:wrap;\">\n    <span class=\"badge badge-blue\">Node.js ≥ 14</span>\n    <span class=\"badge badge-purple\">Express 4.18</span>\n    <span class=\"badge badge-blue\">Vanilla JS (ES2022)</span>\n    <span class=\"badge badge-blue\">HTML5</span>\n    <span class=\"badge badge-blue\">CSS3 (custom properties)</span>\n    <span class=\"badge badge-green\">IBM WatsonX AI</span>\n    <span class=\"badge badge-green\">IBM Granite 3 (8B)</span>\n    <span class=\"badge badge-green\">IBM IAM OAuth2</span>\n    <span class=\"badge badge-purple\">IBM Carbon Design</span>\n    <span class=\"badge badge-gray\">Font Awesome 6.4</span>\n    <span class=\"badge badge-gray\">IBM Plex Sans</span>\n    <span class=\"badge badge-gray\">localStorage API</span>\n    <span class=\"badge badge-gray\">REST / fetch()</span>\n  </div>\n\n  <div class=\"footer\">Made with IBM Bob</div>\n</div>\n</body>\n</html>\n"
+                },
+                "isError": false
+              },
+              "labels": {
+                "displayName": "Create artifact {title}",
+                "error": "Failed to create artifact {title}",
+                "running": "Creating artifact {title}",
+                "success": "Created artifact {title}",
+                "runningLong": [
+                  "Still drafting...",
+                  "Laying out the page...",
+                  "Polishing the markup...",
+                  "Tightening the layout...",
+                  "Composing a clean one-pager...",
+                  "Almost ready to publish..."
+                ]
+              },
+              "permission": "artifact",
+              "isOutsideWorkspace": false
+            },
+            "_meta": {
+              "artifacts": {
+                "healthai_architecture": {
+                  "id": "healthai_architecture",
+                  "title": "HealthAI — Architecture Blueprint",
+                  "description": "Full system architecture of the IBM Bob–powered AI Healthcare Assistant (HealthAI)",
+                  "mediaType": "text/html",
+                  "content": "\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<title>HealthAI — Architecture Blueprint</title>\n<style>\n  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }\n  body {\n    font-family: -apple-system, \"Segoe UI\", system-ui, sans-serif;\n    font-size: 14px;\n    line-height: 1.6;\n    background: #f7f8fa;\n    color: #1f2328;\n    padding: 32px 16px 48px;\n  }\n  .wrap { max-width: 760px; margin: 0 auto; }\n\n  h1 { font-size: 1.5rem; font-weight: 700; color: #1f2328; margin-bottom: 4px; }\n  .subtitle { color: #57606a; font-size: .9rem; margin-bottom: 32px; }\n\n  /* ── Section headings ── */\n  h2 {\n    font-size: .75rem;\n    font-weight: 700;\n    text-transform: uppercase;\n    letter-spacing: .09em;\n    color: #57606a;\n    margin: 32px 0 12px;\n    padding-bottom: 6px;\n    border-bottom: 1px solid #e5e7eb;\n  }\n\n  /* ── Architecture diagram ── */\n  .diagram {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    padding: 24px 20px;\n    overflow-x: auto;\n  }\n\n  svg { display: block; margin: 0 auto; }\n\n  /* ── Layer cards ── */\n  .layers { display: flex; flex-direction: column; gap: 12px; margin-top: 0; }\n  .layer {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    padding: 16px 20px;\n  }\n  .layer-title {\n    font-size: .78rem;\n    font-weight: 700;\n    text-transform: uppercase;\n    letter-spacing: .07em;\n    margin-bottom: 10px;\n  }\n  .layer.l-browser .layer-title { color: #3b82d4; }\n  .layer.l-server  .layer-title { color: #7c5cd8; }\n  .layer.l-ibm     .layer-title { color: #198038; }\n\n  .items { display: flex; flex-wrap: wrap; gap: 8px; }\n  .item {\n    background: #f7f8fa;\n    border: 1px solid #e5e7eb;\n    border-radius: 6px;\n    padding: 6px 12px;\n    font-size: .82rem;\n    color: #1f2328;\n  }\n  .item code {\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    font-size: .78rem;\n    color: #57606a;\n  }\n  .item.accent { border-color: #3b82d4; background: #f0f5ff; }\n  .item.purple { border-color: #7c5cd8; background: #f8f4ff; }\n  .item.green  { border-color: #198038; background: #f0faf2; }\n\n  /* ── Data flow table ── */\n  table {\n    width: 100%;\n    border-collapse: collapse;\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 10px;\n    overflow: hidden;\n    font-size: .85rem;\n  }\n  thead th {\n    background: #f7f8fa;\n    border-bottom: 1px solid #e5e7eb;\n    text-align: left;\n    padding: 10px 14px;\n    font-weight: 600;\n    color: #57606a;\n    font-size: .78rem;\n    text-transform: uppercase;\n    letter-spacing: .06em;\n  }\n  tbody td {\n    padding: 10px 14px;\n    border-bottom: 1px solid #f0f1f3;\n    vertical-align: top;\n  }\n  tbody tr:last-child td { border-bottom: none; }\n  tbody tr:hover td { background: #f7f8fa; }\n  .step-badge {\n    display: inline-block;\n    background: #3b82d4;\n    color: #fff;\n    border-radius: 50%;\n    width: 22px; height: 22px;\n    text-align: center;\n    line-height: 22px;\n    font-size: .72rem;\n    font-weight: 700;\n    flex-shrink: 0;\n  }\n  td code {\n    background: #f0f1f3;\n    border: 1px solid #e5e7eb;\n    border-radius: 4px;\n    padding: 1px 6px;\n    font-size: .78rem;\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    color: #57606a;\n  }\n\n  /* ── Feature grid ── */\n  .feat-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n  }\n  .feat {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 14px 16px;\n  }\n  .feat-name { font-weight: 600; font-size: .88rem; margin-bottom: 4px; }\n  .feat-desc { font-size: .82rem; color: #57606a; line-height: 1.5; }\n\n  /* ── Security / config table ── */\n  .config-grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 10px;\n  }\n  .cfg {\n    background: #fff;\n    border: 1px solid #e5e7eb;\n    border-radius: 8px;\n    padding: 12px 16px;\n  }\n  .cfg-key { font-size: .78rem; color: #57606a; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; font-weight: 600; }\n  .cfg-val { font-size: .88rem; font-weight: 500; color: #1f2328; }\n  .cfg-val code {\n    font-family: \"SFMono-Regular\", Consolas, monospace;\n    font-size: .78rem;\n    color: #57606a;\n  }\n\n  /* ── Badge ── */\n  .badge {\n    display: inline-block;\n    border-radius: 20px;\n    padding: 2px 9px;\n    font-size: .72rem;\n    font-weight: 600;\n  }\n  .badge-blue   { background: #dbeafe; color: #1d4ed8; }\n  .badge-green  { background: #dcfce7; color: #15803d; }\n  .badge-purple { background: #ede9fe; color: #6d28d9; }\n  .badge-gray   { background: #f3f4f6; color: #374151; }\n  .badge-red    { background: #fee2e2; color: #dc2626; }\n\n  /* ── Footer ── */\n  .footer {\n    margin-top: 48px;\n    padding-top: 14px;\n    border-top: 1px solid #e5e7eb;\n    text-align: center;\n    font-size: .75rem;\n    color: #57606a;\n  }\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n\n  <h1>HealthAI — Architecture Blueprint</h1>\n  <p class=\"subtitle\">AI-Powered Medical Chatbot · Powered by IBM Bob &amp; Granite 3 · v1.0.0</p>\n\n  \n  <h2>System Architecture Diagram</h2>\n  <div class=\"diagram\">\n    <svg width=\"700\" height=\"420\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"-apple-system, Segoe UI, system-ui, sans-serif\" font-size=\"12\">\n\n      \n      <rect x=\"20\" y=\"20\" width=\"660\" height=\"130\" rx=\"10\" fill=\"#f0f5ff\" stroke=\"#3b82d4\" stroke-width=\"1.5\"></rect>\n      <text x=\"36\" y=\"42\" font-size=\"10\" font-weight=\"700\" fill=\"#3b82d4\">BROWSER (CLIENT)</text>\n\n      \n      <rect x=\"40\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"></rect>\n      <text x=\"95\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">index.html</text>\n      <text x=\"95\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Chat · Wellness</text>\n      <text x=\"95\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Symptoms · About</text>\n\n      \n      <rect x=\"170\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"></rect>\n      <text x=\"225\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">styles.css</text>\n      <text x=\"225\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">IBM Carbon</text>\n      <text x=\"225\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Design System</text>\n\n      \n      <rect x=\"300\" y=\"54\" width=\"130\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"></rect>\n      <text x=\"365\" y=\"74\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">script.js</text>\n      <text x=\"365\" y=\"90\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Chat Engine</text>\n      <text x=\"365\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Symptom Checker</text>\n      <text x=\"365\" y=\"120\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Wellness Router</text>\n\n      \n      <rect x=\"450\" y=\"54\" width=\"110\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"></rect>\n      <text x=\"505\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">localStorage</text>\n      <text x=\"505\" y=\"96\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Conversation</text>\n      <text x=\"505\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">History Cache</text>\n\n      \n      <rect x=\"580\" y=\"54\" width=\"80\" height=\"76\" rx=\"7\" fill=\"#fff\" stroke=\"#3b82d4\" stroke-width=\"1.2\"></rect>\n      <text x=\"620\" y=\"78\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">config</text>\n      <text x=\"620\" y=\"94\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">.json</text>\n      <text x=\"620\" y=\"111\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">UI Settings</text>\n\n      \n      <line x1=\"350\" y1=\"150\" x2=\"350\" y2=\"188\" stroke=\"#57606a\" stroke-width=\"1.5\" marker-end=\"url(#arr)\"></line>\n      <text x=\"360\" y=\"173\" font-size=\"10\" fill=\"#57606a\">POST /api/chat</text>\n\n      \n      <rect x=\"20\" y=\"190\" width=\"660\" height=\"110\" rx=\"10\" fill=\"#f8f4ff\" stroke=\"#7c5cd8\" stroke-width=\"1.5\"></rect>\n      <text x=\"36\" y=\"212\" font-size=\"10\" font-weight=\"700\" fill=\"#7c5cd8\">EXPRESS SERVER (server.js · Node.js)</text>\n\n      <rect x=\"40\" y=\"222\" width=\"130\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"></rect>\n      <text x=\"105\" y=\"246\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">Static Serve</text>\n      <text x=\"105\" y=\"264\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">express.static</text>\n\n      <rect x=\"190\" y=\"222\" width=\"160\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"></rect>\n      <text x=\"270\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">POST /api/chat</text>\n      <text x=\"270\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">Prompt proxy</text>\n      <text x=\"270\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">+ param forwarding</text>\n\n      <rect x=\"370\" y=\"222\" width=\"150\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"></rect>\n      <text x=\"445\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">IAM Token Cache</text>\n      <text x=\"445\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">getAccessToken()</text>\n      <text x=\"445\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">60 s refresh guard</text>\n\n      <rect x=\"540\" y=\"222\" width=\"120\" height=\"60\" rx=\"7\" fill=\"#fff\" stroke=\"#7c5cd8\" stroke-width=\"1.2\"></rect>\n      <text x=\"600\" y=\"242\" text-anchor=\"middle\" font-weight=\"600\" fill=\"#1f2328\">Catch-all SPA</text>\n      <text x=\"600\" y=\"258\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">GET * →</text>\n      <text x=\"600\" y=\"273\" text-anchor=\"middle\" font-size=\"11\" fill=\"#57606a\">index.html</text>\n\n      \n      <line x1=\"445\" y1=\"300\" x2=\"445\" y2=\"335\" stroke=\"#57606a\" stroke-width=\"1.5\" marker-end=\"url(#arr)\"></line>\n      <text x=\"454\" y=\"320\" font-size=\"10\" fill=\"#57606a\">Bearer token</text>\n\n      \n      <line x1=\"270\" y1=\"300\" x2=\"270\" y2=\"335\" stroke=\"#57606a\" stroke-width=\"1.5\" marker-end=\"url(#arr)\"></line>\n      <text x=\"166\" y=\"320\" font-size=\"10\" fill=\"#57606a\">WatsonX inference call</text>\n\n      \n      <rect x=\"20\" y=\"337\" width=\"660\" height=\"65\" rx=\"10\" fill=\"#f0faf2\" stroke=\"#198038\" stroke-width=\"1.5\"></rect>\n      <text x=\"36\" y=\"358\" font-size=\"10\" font-weight=\"700\" fill=\"#198038\">IBM CLOUD (us-south)</text>\n\n      <rect x=\"40\" y=\"366\" width=\"220\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"></rect>\n      <text x=\"150\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">IAM · iam.cloud.ibm.com/identity/token</text>\n\n      <rect x=\"280\" y=\"366\" width=\"210\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"></rect>\n      <text x=\"385\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">WatsonX · ml/v1/text/generation</text>\n\n      <rect x=\"510\" y=\"366\" width=\"160\" height=\"28\" rx=\"6\" fill=\"#fff\" stroke=\"#198038\" stroke-width=\"1.2\"></rect>\n      <text x=\"590\" y=\"384\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"600\" fill=\"#1f2328\">Granite 3 · 8b-instruct</text>\n\n      \n      <defs>\n        <marker id=\"arr\">\n          <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#57606a\"></path>\n        </marker>\n      </defs>\n    </svg>\n  </div>\n\n  \n  <h2>Layer Breakdown</h2>\n  <div class=\"layers\">\n\n    <div class=\"layer l-browser\">\n      <div class=\"layer-title\">Layer 1 — Browser / Client</div>\n      <div class=\"items\">\n        <div class=\"item accent\"><strong>index.html</strong> · SPA shell, 4 sections</div>\n        <div class=\"item accent\"><strong>styles.css</strong> · IBM Carbon-inspired design system</div>\n        <div class=\"item accent\"><strong>script.js</strong> · Chat engine, symptom checker, wellness router</div>\n        <div class=\"item accent\"><strong>localStorage</strong> · Conversation history persistence</div>\n        <div class=\"item accent\"><strong>config.json</strong> · UI &amp; model settings</div>\n        <div class=\"item accent\">Font Awesome 6.4 · IBM Plex Sans (CDN)</div>\n      </div>\n    </div>\n\n    <div class=\"layer l-server\">\n      <div class=\"layer-title\">Layer 2 — Express Backend Proxy (server.js · Node.js v14+)</div>\n      <div class=\"items\">\n        <div class=\"item purple\"><code>POST /api/chat</code> — prompt proxy with param forwarding</div>\n        <div class=\"item purple\"><code>getAccessToken()</code> — IAM token fetch &amp; 60 s cache</div>\n        <div class=\"item purple\"><code>express.static()</code> — serves all frontend assets</div>\n        <div class=\"item purple\"><code>GET *</code> — SPA catch-all → index.html</div>\n        <div class=\"item purple\">Port: <code>3000</code> (env: <code>PORT</code>)</div>\n      </div>\n    </div>\n\n    <div class=\"layer l-ibm\">\n      <div class=\"layer-title\">Layer 3 — IBM Cloud (us-south)</div>\n      <div class=\"items\">\n        <div class=\"item green\">IBM IAM Token endpoint</div>\n        <div class=\"item green\">WatsonX AI · <code>us-south.ml.cloud.ibm.com</code></div>\n        <div class=\"item green\">Model · <code>ibm/granite-3-8b-instruct</code></div>\n        <div class=\"item green\">API version · <code>2023-05-29</code></div>\n        <div class=\"item green\">Project ID · <code>a0a5cc1f-…-f9c19c29b36e</code></div>\n      </div>\n    </div>\n\n  </div>\n\n  \n  <h2>Request / Response Data Flow</h2>\n  <table>\n    <thead>\n      <tr>\n        <th>#</th><th>From</th><th>To</th><th>Payload / Action</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td><span class=\"step-badge\">1</span></td>\n        <td>User</td>\n        <td>Browser (script.js)</td>\n        <td>Types message / selects symptom / clicks Wellness card</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">2</span></td>\n        <td>script.js</td>\n        <td>script.js</td>\n        <td>Builds <code>SYSTEM_PROMPT</code> + conversation history + user message → full prompt string</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">3</span></td>\n        <td>Browser</td>\n        <td><code>POST /api/chat</code></td>\n        <td>JSON body: <code>{ prompt, parameters }</code></td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">4</span></td>\n        <td>server.js</td>\n        <td>IBM IAM</td>\n        <td><code>grant_type=apikey</code> → returns <code>access_token</code> (cached up to expiry − 60 s)</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">5</span></td>\n        <td>server.js</td>\n        <td>WatsonX AI</td>\n        <td><code>Bearer token</code> + model/project/prompt/params → inference request</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">6</span></td>\n        <td>WatsonX / Granite 3</td>\n        <td>server.js</td>\n        <td>JSON <code>{ results[0].generated_text }</code></td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">7</span></td>\n        <td>server.js</td>\n        <td>Browser</td>\n        <td>Proxied JSON response forwarded as-is</td>\n      </tr>\n      <tr>\n        <td><span class=\"step-badge\">8</span></td>\n        <td>script.js</td>\n        <td>DOM</td>\n        <td>Parses, formats Markdown-like text, renders bubble, saves to localStorage</td>\n      </tr>\n    </tbody>\n  </table>\n\n  \n  <h2>Frontend Sections &amp; Features</h2>\n  <div class=\"feat-grid\">\n    <div class=\"feat\">\n      <div class=\"feat-name\">💬 Chat</div>\n      <div class=\"feat-desc\">Full conversational interface with system prompt, 20-message rolling history, typing indicator, export &amp; clear controls, auto-resize textarea.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">🌿 Wellness Dashboard</div>\n      <div class=\"feat-desc\">9 topic cards (Heart, Nutrition, Fitness, Mental Health, Sleep, Preventive Care, Diabetes, Hydration, Women's Health) — each fires a pre-built AI query.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">🩺 Symptom Awareness Tool</div>\n      <div class=\"feat-desc\">22 searchable/filterable symptom tags with chip UI, emergency keyword detection, structured AI health-info response panel.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">ℹ️ About</div>\n      <div class=\"feat-desc\">Tech stack, mission statement, key capabilities, important medical disclaimer, and project objectives.</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">⚡ Quick Topics Sidebar</div>\n      <div class=\"feat-desc\">8 one-click health queries (Cold &amp; Flu, Sleep Tips, Healthy Diet, Stress Relief, Exercise Plan, Immunity, Hydration, Heart Health).</div>\n    </div>\n    <div class=\"feat\">\n      <div class=\"feat-name\">📦 Persistence</div>\n      <div class=\"feat-desc\">Conversation history saved to <code>localStorage</code> and restored on page load (max 20 messages).</div>\n    </div>\n  </div>\n\n  \n  <h2>IBM Granite 3 Model Configuration</h2>\n  <div class=\"config-grid\">\n    <div class=\"cfg\"><div class=\"cfg-key\">Model ID</div><div class=\"cfg-val\"><code>ibm/granite-3-8b-instruct</code></div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Decoding</div><div class=\"cfg-val\">Greedy</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Max New Tokens</div><div class=\"cfg-val\">1 024 (server) · 900 (config)</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Min New Tokens</div><div class=\"cfg-val\">10</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Repetition Penalty</div><div class=\"cfg-val\">1.05</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Temperature</div><div class=\"cfg-val\">0.7 (config)</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Top-P</div><div class=\"cfg-val\">1.0</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Stop Sequences</div><div class=\"cfg-val\"><code>&lt;|user|&gt;</code> · <code>&lt;|system|&gt;</code></div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">Region</div><div class=\"cfg-val\">us-south</div></div>\n    <div class=\"cfg\"><div class=\"cfg-key\">API Version</div><div class=\"cfg-val\">2023-05-29</div></div>\n  </div>\n\n  \n  <h2>Security &amp; Design Notes</h2>\n  <table>\n    <thead>\n      <tr><th>Concern</th><th>Approach</th><th>Status</th></tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>API Key exposure</td>\n        <td>Key lives only in <code>server.js</code> — never sent to the browser</td>\n        <td><span class=\"badge badge-green\">Mitigated</span></td>\n      </tr>\n      <tr>\n        <td>IBM IAM token</td>\n        <td>Cached server-side with 60 s pre-expiry refresh; never leaves the server</td>\n        <td><span class=\"badge badge-green\">Mitigated</span></td>\n      </tr>\n      <tr>\n        <td>CORS</td>\n        <td>Same-origin by default (Express serves both static &amp; API)</td>\n        <td><span class=\"badge badge-green\">OK</span></td>\n      </tr>\n      <tr>\n        <td>Rate limiting</td>\n        <td>Not implemented</td>\n        <td><span class=\"badge badge-red\">TODO</span></td>\n      </tr>\n      <tr>\n        <td>Data encryption (at rest)</td>\n        <td>Not implemented</td>\n        <td><span class=\"badge badge-red\">TODO</span></td>\n      </tr>\n      <tr>\n        <td>Input validation</td>\n        <td>Server checks <code>prompt</code> presence; returns 400 if missing</td>\n        <td><span class=\"badge badge-blue\">Partial</span></td>\n      </tr>\n      <tr>\n        <td>Error propagation</td>\n        <td>Global <code>window.error</code> &amp; <code>unhandledrejection</code> hide loading overlay</td>\n        <td><span class=\"badge badge-green\">Handled</span></td>\n      </tr>\n    </tbody>\n  </table>\n\n  \n  <h2>Technology Stack</h2>\n  <div class=\"items\" style=\"background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 20px;gap:8px;display:flex;flex-wrap:wrap\">\n    <span class=\"badge badge-blue\">Node.js ≥ 14</span>\n    <span class=\"badge badge-purple\">Express 4.18</span>\n    <span class=\"badge badge-blue\">Vanilla JS (ES2022)</span>\n    <span class=\"badge badge-blue\">HTML5</span>\n    <span class=\"badge badge-blue\">CSS3 (custom properties)</span>\n    <span class=\"badge badge-green\">IBM WatsonX AI</span>\n    <span class=\"badge badge-green\">IBM Granite 3 (8B)</span>\n    <span class=\"badge badge-green\">IBM IAM OAuth2</span>\n    <span class=\"badge badge-purple\">IBM Carbon Design</span>\n    <span class=\"badge badge-gray\">Font Awesome 6.4</span>\n    <span class=\"badge badge-gray\">IBM Plex Sans</span>\n    <span class=\"badge badge-gray\">localStorage API</span>\n    <span class=\"badge badge-gray\">REST / fetch()</span>\n  </div>\n\n  <div class=\"footer\">Made with IBM Bob</div>\n</div>\n</body>\n</html>\n",
+                  "createdAt": 1782537906927
+                }
+              },
+              "durationMs": 212,
+              "timestamp": 1782537906928
+            },
+            "id": "d70abdf427e43730c4c47d4f8c538f38"
+          },
+          "createdAt": 1782537906946
+        },
+        {
+          "id": "30caec2389fb950764c7009d73117ccc",
+          "role": "assistant",
+          "data": {
+            "role": "assistant",
+            "content": "Here is the complete Architecture Blueprint for your **HealthAI / IBM Bob** project. It covers all five key areas:\n\n| Section | What's documented |\n|---|---|\n| **System Diagram** | Visual SVG showing Browser → Express → IBM Cloud layering with data-flow arrows |\n| **Layer Breakdown** | Every file and its role across 3 tiers |\n| **Request / Response Flow** | 8-step numbered walkthrough from user input → Granite 3 → DOM render |\n| **Frontend Sections** | Chat, Wellness Dashboard, Symptom Tool, About, Quick Topics, Persistence |\n| **Model Config** | All Granite 3 inference parameters (decoding, tokens, stop sequences, temperature) |\n| **Security Notes** | API key isolation, IAM token caching, CORS, and open TODOs (rate-limiting, encryption) |\n| **Tech Stack** | Every dependency across all 3 layers with colour-coded badges |\n\n**Key architectural insight:** the Express server acts purely as a **security proxy** — it keeps the IBM API key and IAM bearer token completely server-side, so the browser only ever talks to `/api/chat` on the same origin.",
+            "id": "30caec2389fb950764c7009d73117ccc",
+            "_meta": {
+              "timestamp": 1782537909629,
+              "spend": {
+                "input": 41508,
+                "output": 275,
+                "cacheRead": 33488,
+                "cacheWrite": 8019,
+                "cost": 0.104457,
+                "contextTokens": 41783,
+                "reasoningTokens": 0
+              }
+            },
+            "stop": true
+          },
+          "createdAt": 1782537914910
+        }
+      ]
+    }
+  ]
+}

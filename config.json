@@ -1,0 +1,51 @@
+{
+  "application": {
+    "name": "AI Healthcare Assistant",
+    "version": "1.0.0",
+    "description": "AI-Powered Medical Chatbot using IBM Watson for Intelligent Healthcare Assistance",
+    "author": "Healthcare AI Team",
+    "license": "MIT"
+  },
+  "ibm_watson": {
+    "project_id": "a0a5cc1f-6385-4952-be11-f9c19c29b36e",
+    "endpoint": "https://us-south.ml.cloud.ibm.com",
+    "model_id": "ibm/granite-3-8b-instruct",
+    "api_version": "2023-05-29",
+    "region": "us-south"
+  },
+  "model_parameters": {
+    "decoding_method": "greedy",
+    "max_new_tokens": 900,
+    "min_new_tokens": 0,
+    "repetition_penalty": 1.0,
+    "temperature": 0.7,
+    "top_p": 1.0,
+    "top_k": 50
+  },
+  "features": {
+    "chat": true,
+    "wellness_dashboard": true,
+    "quick_actions": true,
+    "conversation_history": true,
+    "local_storage": true,
+    "responsive_design": true
+  },
+  "ui_settings": {
+    "theme": "healthcare",
+    "primary_color": "#0f62fe",
+    "secondary_color": "#0043ce",
+    "max_conversation_history": 20,
+    "typing_indicator": true,
+    "message_timestamps": true
+  },
+  "security": {
+    "https_only": true,
+    "cors_enabled": true,
+    "rate_limiting": false,
+    "data_encryption": false
+  },
+  "disclaimer": {
+    "show_on_startup": true,
+    "text": "This AI assistant provides general health information only. Always consult healthcare professionals for medical advice."
+  }
+}

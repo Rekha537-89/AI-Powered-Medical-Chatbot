@@ -1,0 +1,42 @@
+{
+  "name": "ai-healthcare-assistant",
+  "version": "1.0.0",
+  "description": "AI-Powered Medical Chatbot using IBM Watson for Intelligent Healthcare Assistance",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "keywords": [
+    "healthcare",
+    "ai",
+    "chatbot",
+    "ibm-watson",
+    "medical-assistant",
+    "wellness",
+    "health-tech",
+    "artificial-intelligence",
+    "natural-language-processing"
+  ],
+  "author": "Healthcare AI Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ai-healthcare-assistant.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/ai-healthcare-assistant/issues"
+  },
+  "homepage": "https://github.com/yourusername/ai-healthcare-assistant#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}
